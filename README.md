@@ -169,6 +169,7 @@ The current `OCI-Azure Interconnect` example also mixes FoggyKitchen modules wit
 
 Start with:
 
+- [docs/README.md](docs/README.md)
 - [docs/architecture.md](docs/architecture.md)
 - [docs/payload-contract.md](docs/payload-contract.md)
 - [docs/module-map.md](docs/module-map.md)
