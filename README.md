@@ -69,11 +69,27 @@ foggykitchen-landing-zone-orchestrator/
 ├── docs/
 ├── examples/
 │   ├── azure/
+│   │   ├── README.md
 │   │   └── networking/
+│   │       ├── README.md
+│   │       ├── hub_spoke/
+│   │       │   └── basic/
+│   │       └── private_endpoint/
+│   │           └── storage_private_link/
 │   ├── oci/
+│   │   ├── README.md
 │   │   └── networking/
+│   │       ├── README.md
+│   │       ├── drg_hub_spoke/
+│   │       │   └── basic/
+│   │       └── lpg_local_peering/
+│   │           └── basic/
 │   └── multicloud/
+│       ├── README.md
 │       └── interconnect/
+│           ├── README.md
+│           └── oci_azure_interconnect/
+│               └── basic/
 ├── patterns/
 │   ├── azure/
 │   │   ├── hub_spoke/
@@ -108,6 +124,12 @@ Shared orchestration patterns:
 - [patterns/oci/lpg_local_peering](patterns/oci/lpg_local_peering)
 - [patterns/multicloud/oci_azure_interconnect](patterns/multicloud/oci_azure_interconnect)
 
+The `OCI-Azure Interconnect` pattern is intentionally transitional at this stage:
+
+- Azure and OCI landing zone foundations use FoggyKitchen modules where they fit well
+- ExpressRoute, FastConnect, and related edge interconnect resources are still implemented as raw provider resources in the orchestrator
+- this will be improved over time as dedicated FoggyKitchen modules for interconnect edge components are introduced
+
 ---
 
 ## 🧩 Module Composition
@@ -132,6 +154,8 @@ The repository composes FoggyKitchen building blocks such as:
 - `terraform-oci-fk-loadbalancer`
 
 The current Azure internal load balancer examples still use direct AzureRM resources because the current `terraform-az-fk-loadbalancer` module is public-frontend oriented.
+
+The current `OCI-Azure Interconnect` example also mixes FoggyKitchen modules with raw provider resources for the interconnect edge layer. This is deliberate for now and will be refactored as the module catalog expands.
 
 ---
 
