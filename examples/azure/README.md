@@ -1,5 +1,31 @@
 # Azure Examples
 
-Azure example payloads are grouped by architecture domain.
+This directory contains **Azure-focused payload examples** organized by architecture domain.
+
+---
+
+## 🎯 Purpose
+
+The goal of this section is to group Azure examples in a way that remains readable as more landing zone variants are added.
+
+Current emphasis:
+
+- networking-oriented landing zone patterns
+- payload-driven reuse of shared Azure orchestrator code
+
+---
+
+## 📂 Available Azure Domains
 
 - [Networking examples](networking/README.md)
+
+---
+
+## 🪪 License
+
+Licensed under the **Universal Permissive License (UPL), Version 1.0**.  
+See [LICENSE](../../LICENSE) for details.
+
+---
+
+© 2026 FoggyKitchen.com — *Cloud. Code. Clarity.*

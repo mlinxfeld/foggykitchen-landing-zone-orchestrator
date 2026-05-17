@@ -1,7 +1,26 @@
-# Diagram Placeholder
+# Diagrams
 
-This directory is reserved for the architecture image referenced by the brief:
+This directory is reserved for **architecture images and related visual assets** for the Azure hub-and-spoke example.
+
+---
+
+## 🎯 Purpose
+
+Expected assets may include:
 
 - `azure-hub-spoke-landing-zone.png`
+- topology refinements
+- validation screenshots
 
-The MVP repository structure is ready for that asset, but the diagram image itself is not generated in this pass.
+The repository structure is ready for those assets even when the image itself is added later.
+
+---
+
+## 🪪 License
+
+Licensed under the **Universal Permissive License (UPL), Version 1.0**.  
+See [LICENSE](../../../../../../LICENSE) for details.
+
+---
+
+© 2026 FoggyKitchen.com — *Cloud. Code. Clarity.*
