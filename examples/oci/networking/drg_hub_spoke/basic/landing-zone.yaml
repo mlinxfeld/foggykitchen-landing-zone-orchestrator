@@ -1,0 +1,121 @@
+landing_zone:
+  name: fk-oci-lz-dev
+  environment: dev
+  freeform_tags:
+    project: foggykitchen
+    environment: dev
+    managed_by: opentofu
+    landing_zone: fk-oci-lz-dev
+
+cloud:
+  provider: oci
+  region: eu-frankfurt-1
+  tenancy_ocid: ocid1.tenancy.oc1..example
+  compartment_ocid: ocid1.compartment.oc1..example
+
+architecture:
+  topology: drg_hub_spoke
+  access_model: private_first
+  routing_model: drg_transit
+  security_model: deny_by_default
+
+networking:
+  vcns:
+    hub:
+      name: vcn-fk-hub-dev
+      dns_label: fkhub
+      cidr_blocks:
+        - 172.16.0.0/16
+      subnets:
+        management:
+          name: snet-hub-management
+          dns_label: mgmt
+          cidr: 172.16.1.0/24
+          route_table_key: private
+          security_list_keys:
+            - private
+    app:
+      name: vcn-fk-app-dev
+      dns_label: fkapp
+      cidr_blocks:
+        - 172.20.0.0/16
+      subnets:
+        frontend:
+          name: snet-app-frontend
+          dns_label: front
+          cidr: 172.20.1.0/24
+          route_table_key: private
+          security_list_keys:
+            - private
+        private:
+          name: snet-app-private
+          dns_label: back
+          cidr: 172.20.2.0/24
+          route_table_key: private
+          security_list_keys:
+            - private
+    data:
+      name: vcn-fk-data-dev
+      dns_label: fkdata
+      cidr_blocks:
+        - 172.30.0.0/16
+      subnets:
+        private:
+          name: snet-data-private
+          dns_label: data
+          cidr: 172.30.1.0/24
+          route_table_key: private
+          security_list_keys:
+            - private
+
+connectivity:
+  mode: drg_hub_spoke
+  drg:
+    enabled: true
+    name: drg-fk-dev
+    attachments:
+      hub:
+        vcn_ref: hub
+      app:
+        vcn_ref: app
+      data:
+        vcn_ref: data
+
+compute:
+  enabled: true
+  instances:
+    app01:
+      name: vm-fk-app-01
+      vcn_ref: app
+      subnet_ref: private
+      shape: VM.Standard.E4.Flex
+      ocpus: 1
+      memory_in_gbs: 8
+      public_ip: false
+      operating_system: Oracle Linux
+      operating_system_version: "9"
+    data01:
+      name: vm-fk-data-01
+      vcn_ref: data
+      subnet_ref: private
+      shape: VM.Standard.E4.Flex
+      ocpus: 1
+      memory_in_gbs: 8
+      public_ip: false
+      operating_system: Oracle Linux
+      operating_system_version: "9"
+
+load_balancer:
+  enabled: true
+  name: lb-fk-app-dev
+  type: private
+  vcn_ref: app
+  backend_instance_refs:
+    - app01
+  listener:
+    protocol: HTTP
+    port: 80
+  health_checker:
+    protocol: HTTP
+    port: 80
+    url_path: /

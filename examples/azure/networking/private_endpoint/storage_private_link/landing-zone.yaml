@@ -1,0 +1,195 @@
+landing_zone:
+  name: fk-azure-pe-lz-dev
+  environment: dev
+  owner: foggykitchen
+  default_tags:
+    project: foggykitchen
+    environment: dev
+    managed_by: opentofu
+    landing_zone: fk-azure-pe-lz-dev
+
+cloud:
+  provider: azure
+  location: westeurope
+  resource_group:
+    create: true
+    name: rg-fk-azure-pe-lz-dev
+
+architecture:
+  topology: hub_spoke
+  access_model: private_first
+  routing_model: centralized
+  security_model: deny_by_default
+
+features:
+  vnet_peering: true
+  routing: true
+  nsg: true
+  nat_gateway: true
+  bastion: true
+  private_dns: true
+  compute: true
+  internal_load_balancer: true
+  firewall: false
+  private_endpoint: true
+
+networking:
+  hub:
+    name: vnet-fk-hub-pe-dev
+    address_space:
+      - 10.110.0.0/16
+    subnets:
+      bastion:
+        name: AzureBastionSubnet
+        cidr: 10.110.0.0/26
+      shared:
+        name: snet-shared-services
+        cidr: 10.110.1.0/24
+      firewall:
+        name: AzureFirewallSubnet
+        cidr: 10.110.2.0/26
+
+  spokes:
+    app:
+      name: vnet-fk-app-pe-dev
+      address_space:
+        - 10.120.0.0/16
+      subnets:
+        frontend:
+          name: snet-app-frontend
+          cidr: 10.120.1.0/24
+        backend:
+          name: snet-app-backend
+          cidr: 10.120.2.0/24
+
+    data:
+      name: vnet-fk-data-pe-dev
+      address_space:
+        - 10.130.0.0/16
+      subnets:
+        database:
+          name: snet-data-private
+          cidr: 10.130.1.0/24
+        private_endpoints:
+          name: snet-data-private-endpoints
+          cidr: 10.130.2.0/24
+
+peering:
+  hub_to_spokes: true
+  allow_forwarded_traffic: true
+  allow_gateway_transit: false
+  use_remote_gateways: false
+
+routing:
+  enabled: true
+  mode: basic_hub_spoke
+  spoke_to_spoke:
+    enabled: true
+    via: hub
+  default_route:
+    enabled: false
+  firewall_next_hop:
+    enabled: false
+    ip_address: null
+
+security:
+  nsg:
+    enabled: true
+    baseline_rules:
+      deny_internet_inbound: true
+      allow_http_from_load_balancer: true
+      allow_ssh_from_bastion_or_hub: true
+
+nat_gateway:
+  enabled: true
+  attach_to_subnets:
+    - app.backend
+    - data.database
+
+bastion:
+  enabled: true
+  name: bastion-fk-pe-dev
+  subnet_ref: hub.bastion
+  sku: Standard
+
+private_dns:
+  enabled: true
+  zones:
+    - privatelink.blob.core.windows.net
+    - privatelink.file.core.windows.net
+    - privatelink.database.windows.net
+
+compute:
+  enabled: true
+  instances:
+    app01:
+      name: vm-fk-app-pe-01
+      subnet_ref: app.backend
+      size: Standard_B2s
+      public_ip: false
+      admin_username: azureuser
+      image:
+        publisher: Canonical
+        offer: ubuntu-24_04-lts
+        sku: server
+        version: latest
+      cloud_init: scripts/install-nginx.sh
+
+load_balancer:
+  enabled: true
+  name: ilb-fk-app-pe-dev
+  type: internal
+  frontend_subnet_ref: app.frontend
+  backend_vm_refs:
+    - app01
+  listener:
+    protocol: Tcp
+    port: 80
+  health_probe:
+    protocol: Tcp
+    port: 80
+
+storage:
+  enabled: true
+  name: fkazpeprivdev01
+  account_tier: Standard
+  account_replication_type: LRS
+  account_kind: StorageV2
+  access_tier: Hot
+  public_network_access_enabled: false
+  enable_network_rules: true
+  network_rules:
+    default_action: Deny
+    bypass:
+      - AzureServices
+    ip_rules: []
+    virtual_network_subnet_refs:
+      - app.backend
+      - data.database
+  create_containers: true
+  containers:
+    appdata:
+      access_type: private
+  create_file_shares: true
+  file_shares:
+    shared:
+      quota_gb: 100
+      access_tier: TransactionOptimized
+
+private_endpoints:
+  enabled: true
+  endpoints:
+    blob:
+      name: pe-fk-storage-blob-dev
+      subnet_ref: data.private_endpoints
+      subresource_names:
+        - blob
+      private_dns_zone_names:
+        - privatelink.blob.core.windows.net
+    file:
+      name: pe-fk-storage-file-dev
+      subnet_ref: data.private_endpoints
+      subresource_names:
+        - file
+      private_dns_zone_names:
+        - privatelink.file.core.windows.net

@@ -1,0 +1,6 @@
+module "landing_zone" {
+  source = "../../../../../patterns/azure/private_endpoint"
+
+  payload_file         = "${path.module}/landing-zone.yaml"
+  admin_ssh_public_key = var.admin_ssh_public_key
+}

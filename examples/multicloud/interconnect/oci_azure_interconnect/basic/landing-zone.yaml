@@ -1,0 +1,85 @@
+landing_zone:
+  name: fk-oci-azure-interconnect-dev
+  environment: dev
+  owner: foggykitchen
+  default_tags:
+    project: foggykitchen
+    environment: dev
+    managed_by: opentofu
+    landing_zone: fk-oci-azure-interconnect-dev
+
+azure:
+  location: germanywestcentral
+  resource_group:
+    name: rg-fk-azure-oci-interconnect-dev
+  networking:
+    vnet:
+      name: vnet-fk-azure-oci-interconnect-dev
+      address_space:
+        - 10.40.0.0/16
+      subnets:
+        gateway:
+          name: GatewaySubnet
+          cidr: 10.40.0.0/27
+        private:
+          name: snet-azure-private
+          cidr: 10.40.2.0/24
+  compute:
+    instance:
+      name: vm-fk-azure-01
+      admin_username: azureuser
+      size: Standard_B2s
+      image:
+        publisher: Canonical
+        offer: 0001-com-ubuntu-server-jammy
+        sku: 22_04-lts-gen2
+        version: latest
+
+oci:
+  region: eu-frankfurt-1
+  tenancy_ocid: ocid1.tenancy.oc1..example
+  compartment_ocid: ocid1.compartment.oc1..example
+  networking:
+    vcn:
+      name: vcn-fk-oci-azure-interconnect-dev
+      dns_label: fkinter
+      cidr_blocks:
+        - 192.168.0.0/16
+      subnets:
+        private:
+          name: snet-oci-private
+          dns_label: priv
+          cidr: 192.168.2.0/24
+  compute:
+    instance:
+      name: vm-fk-oci-01
+      shape: VM.Standard.E4.Flex
+      ocpus: 1
+      memory_in_gbs: 8
+      operating_system: Oracle Linux
+      operating_system_version: "9"
+
+interconnect:
+  azure:
+    public_ip_name: pip-fk-oci-er-dev
+    virtual_network_gateway:
+      name: vng-fk-oci-er-dev
+      sku: Standard
+    express_route_circuit:
+      name: erc-fk-oci-dev
+      peering_location: Frankfurt
+      bandwidth_in_mbps: 50
+    connection:
+      name: conn-fk-er-vng-dev
+      enabled: false
+  oci:
+    drg:
+      name: drg-fk-azure-oci-dev
+    virtual_circuit:
+      name: vc-fk-azure-oci-dev
+      bandwidth_shape_name: 1 Gbps
+      cross_connect_mappings:
+        - oracle_bgp_peering_ip: 10.99.0.201/30
+          customer_bgp_peering_ip: 10.99.0.202/30
+        - oracle_bgp_peering_ip: 10.99.0.205/30
+          customer_bgp_peering_ip: 10.99.0.206/30

@@ -1,0 +1,99 @@
+landing_zone:
+  name: fk-oci-lpg-lz-dev
+  environment: dev
+  freeform_tags:
+    project: foggykitchen
+    environment: dev
+    managed_by: opentofu
+    landing_zone: fk-oci-lpg-lz-dev
+
+cloud:
+  provider: oci
+  region: eu-frankfurt-1
+  tenancy_ocid: ocid1.tenancy.oc1..example
+  compartment_ocid: ocid1.compartment.oc1..example
+
+architecture:
+  topology: lpg_local_peering
+  access_model: private_first
+  routing_model: local_peering
+  security_model: deny_by_default
+
+networking:
+  vcns:
+    app:
+      name: vcn-fk-app-lpg-dev
+      dns_label: fkapplpg
+      cidr_blocks:
+        - 172.40.0.0/16
+      subnets:
+        frontend:
+          name: snet-app-frontend
+          dns_label: front
+          cidr: 172.40.1.0/24
+          security_list_keys:
+            - private
+        private:
+          name: snet-app-private
+          dns_label: back
+          cidr: 172.40.2.0/24
+          security_list_keys:
+            - private
+    data:
+      name: vcn-fk-data-lpg-dev
+      dns_label: fkdatalpg
+      cidr_blocks:
+        - 172.50.0.0/16
+      subnets:
+        private:
+          name: snet-data-private
+          dns_label: data
+          cidr: 172.50.1.0/24
+          security_list_keys:
+            - private
+
+connectivity:
+  mode: lpg_local_peering
+  lpg:
+    enabled: true
+    vcn_1_ref: app
+    vcn_2_ref: data
+
+compute:
+  enabled: true
+  instances:
+    app01:
+      name: vm-fk-app-lpg-01
+      vcn_ref: app
+      subnet_ref: private
+      shape: VM.Standard.E4.Flex
+      ocpus: 1
+      memory_in_gbs: 8
+      public_ip: false
+      operating_system: Oracle Linux
+      operating_system_version: "9"
+    data01:
+      name: vm-fk-data-lpg-01
+      vcn_ref: data
+      subnet_ref: private
+      shape: VM.Standard.E4.Flex
+      ocpus: 1
+      memory_in_gbs: 8
+      public_ip: false
+      operating_system: Oracle Linux
+      operating_system_version: "9"
+
+load_balancer:
+  enabled: true
+  name: lb-fk-app-lpg-dev
+  type: private
+  vcn_ref: app
+  backend_instance_refs:
+    - app01
+  listener:
+    protocol: HTTP
+    port: 80
+  health_checker:
+    protocol: HTTP
+    port: 80
+    url_path: /

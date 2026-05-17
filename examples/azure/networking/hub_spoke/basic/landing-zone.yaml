@@ -1,0 +1,150 @@
+landing_zone:
+  name: fk-azure-lz-dev
+  environment: dev
+  owner: foggykitchen
+  default_tags:
+    project: foggykitchen
+    environment: dev
+    managed_by: opentofu
+    landing_zone: fk-azure-lz-dev
+
+cloud:
+  provider: azure
+  location: westeurope
+  resource_group:
+    create: true
+    name: rg-fk-azure-lz-dev
+
+architecture:
+  topology: hub_spoke
+  access_model: private_first
+  routing_model: centralized
+  security_model: deny_by_default
+
+features:
+  vnet_peering: true
+  routing: true
+  nsg: true
+  nat_gateway: true
+  bastion: true
+  private_dns: true
+  compute: true
+  internal_load_balancer: true
+  firewall: false
+  private_endpoint: false
+
+networking:
+  hub:
+    name: vnet-fk-hub-dev
+    address_space:
+      - 10.10.0.0/16
+    subnets:
+      bastion:
+        name: AzureBastionSubnet
+        cidr: 10.10.0.0/26
+      shared:
+        name: snet-shared-services
+        cidr: 10.10.1.0/24
+      firewall:
+        name: AzureFirewallSubnet
+        cidr: 10.10.2.0/26
+
+  spokes:
+    app:
+      name: vnet-fk-app-dev
+      address_space:
+        - 10.20.0.0/16
+      subnets:
+        frontend:
+          name: snet-app-frontend
+          cidr: 10.20.1.0/24
+        backend:
+          name: snet-app-backend
+          cidr: 10.20.2.0/24
+
+    data:
+      name: vnet-fk-data-dev
+      address_space:
+        - 10.30.0.0/16
+      subnets:
+        database:
+          name: snet-data-private
+          cidr: 10.30.1.0/24
+        private_endpoints:
+          name: snet-data-private-endpoints
+          cidr: 10.30.2.0/24
+
+peering:
+  hub_to_spokes: true
+  allow_forwarded_traffic: true
+  allow_gateway_transit: false
+  use_remote_gateways: false
+
+routing:
+  enabled: true
+  mode: basic_hub_spoke
+  spoke_to_spoke:
+    enabled: true
+    via: hub
+  default_route:
+    enabled: false
+  firewall_next_hop:
+    enabled: false
+    ip_address: null
+
+security:
+  nsg:
+    enabled: true
+    baseline_rules:
+      deny_internet_inbound: true
+      allow_http_from_load_balancer: true
+      allow_ssh_from_bastion_or_hub: true
+
+nat_gateway:
+  enabled: true
+  attach_to_subnets:
+    - app.backend
+    - data.database
+
+bastion:
+  enabled: true
+  name: bastion-fk-dev
+  subnet_ref: hub.bastion
+  sku: Standard
+
+private_dns:
+  enabled: true
+  zones:
+    - privatelink.blob.core.windows.net
+    - privatelink.file.core.windows.net
+    - privatelink.database.windows.net
+
+compute:
+  enabled: true
+  instances:
+    app01:
+      name: vm-fk-app-01
+      subnet_ref: app.backend
+      size: Standard_B2s
+      public_ip: false
+      admin_username: azureuser
+      image:
+        publisher: Canonical
+        offer: ubuntu-24_04-lts
+        sku: server
+        version: latest
+      cloud_init: scripts/install-nginx.sh
+
+load_balancer:
+  enabled: true
+  name: ilb-fk-app-dev
+  type: internal
+  frontend_subnet_ref: app.frontend
+  backend_vm_refs:
+    - app01
+  listener:
+    protocol: Tcp
+    port: 80
+  health_probe:
+    protocol: Tcp
+    port: 80
