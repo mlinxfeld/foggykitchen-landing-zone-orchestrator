@@ -123,6 +123,7 @@ Currently implemented:
 
 Shared orchestration patterns:
 
+- [patterns/README.md](patterns/README.md)
 - [patterns/azure/hub_spoke](patterns/azure/hub_spoke)
 - [patterns/azure/firewall_transit](patterns/azure/firewall_transit)
 - [patterns/azure/private_endpoint](patterns/azure/private_endpoint)
