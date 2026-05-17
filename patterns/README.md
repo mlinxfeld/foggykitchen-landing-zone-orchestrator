@@ -23,17 +23,20 @@ Examples under `examples/` should stay thin and delegate architecture logic to t
 
 ### Azure
 
+- [README](azure/README.md)
 - [hub_spoke](azure/hub_spoke)
 - [private_endpoint](azure/private_endpoint)
 - [firewall_transit](azure/firewall_transit)
 
 ### OCI
 
+- [README](oci/README.md)
 - [drg_hub_spoke](oci/drg_hub_spoke)
 - [lpg_local_peering](oci/lpg_local_peering)
 
 ### Multicloud
 
+- [README](multicloud/README.md)
 - [oci_azure_interconnect](multicloud/oci_azure_interconnect)
 
 ---
