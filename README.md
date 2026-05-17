@@ -73,6 +73,8 @@ foggykitchen-landing-zone-orchestrator/
 │   │   ├── README.md
 │   │   └── networking/
 │   │       ├── README.md
+│   │       ├── firewall_transit/
+│   │       │   └── basic/
 │   │       ├── hub_spoke/
 │   │       │   └── basic/
 │   │       └── private_endpoint/
@@ -93,6 +95,7 @@ foggykitchen-landing-zone-orchestrator/
 │               └── basic/
 ├── patterns/
 │   ├── azure/
+│   │   ├── firewall_transit/
 │   │   ├── hub_spoke/
 │   │   └── private_endpoint/
 │   ├── oci/
