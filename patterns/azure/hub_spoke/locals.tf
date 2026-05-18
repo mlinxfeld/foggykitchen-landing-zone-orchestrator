@@ -80,6 +80,8 @@ locals {
 
   load_balancer_backend_refs = toset(try(local.load_balancer.backend_vm_refs, []))
 
+  load_balancer_frontend_subnet_id = try(local.load_balancer.frontend_subnet_ref, null) != null ? module.spoke_vnets[split(".", local.load_balancer.frontend_subnet_ref)[0]].subnet_ids[split(".", local.load_balancer.frontend_subnet_ref)[1]] : null
+
   route_tables = local.features.routing && local.routing.enabled ? {
     app_frontend = {
       location = local.location

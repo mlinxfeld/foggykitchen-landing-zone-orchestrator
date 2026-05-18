@@ -152,6 +152,7 @@ The repository composes FoggyKitchen building blocks such as:
 - `terraform-az-fk-bastion`
 - `terraform-az-fk-private-dns`
 - `terraform-az-fk-compute`
+- `terraform-az-fk-loadbalancer`
 - `terraform-az-fk-storage`
 - `terraform-az-fk-private-endpoint`
 - `terraform-oci-fk-vcn`
@@ -159,8 +160,6 @@ The repository composes FoggyKitchen building blocks such as:
 - `terraform-oci-fk-drg`
 - `terraform-oci-fk-compute`
 - `terraform-oci-fk-loadbalancer`
-
-The current Azure internal load balancer examples still use direct AzureRM resources because the current `terraform-az-fk-loadbalancer` module is public-frontend oriented.
 
 The current `OCI-Azure Interconnect` example also mixes FoggyKitchen modules with raw provider resources for the interconnect edge layer. This is deliberate for now and will be refactored as the module catalog expands.
 

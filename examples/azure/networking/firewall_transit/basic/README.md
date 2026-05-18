@@ -52,16 +52,22 @@ OpenTofu:
 
 ```bash
 tofu init
-tofu plan -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
-tofu apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
+tofu plan
+tofu apply
 ```
 
 Terraform:
 
 ```bash
 terraform init
-terraform plan -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
-terraform apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
+terraform plan
+terraform apply
+```
+
+If you want to inject your own public key instead of generating one automatically, pass:
+
+```bash
+tofu apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
 ```
 
 ---
@@ -75,13 +81,14 @@ terraform apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
 - firewall public IP
 - route table IDs
 - spoke VM private IPs
+- generated admin SSH private key PEM when `admin_ssh_public_key` is left empty
 
 ---
 
 ## 🧹 Cleanup
 
 ```bash
-tofu destroy -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
+tofu destroy
 ```
 
 ---

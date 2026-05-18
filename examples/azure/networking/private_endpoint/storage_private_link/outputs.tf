@@ -33,3 +33,8 @@ output "private_endpoint_private_ips" {
 output "private_dns_zone_ids" {
   value = module.landing_zone.private_dns_zone_ids
 }
+
+output "generated_admin_ssh_private_key_pem" {
+  value     = try(tls_private_key.generated[0].private_key_pem, null)
+  sensitive = true
+}

@@ -73,17 +73,19 @@ Why:
 
 ---
 
-## 🌐 Direct Internal Load Balancer in Azure
+## 🌐 Shared Internal Load Balancer in Azure
 
-The current `terraform-az-fk-loadbalancer` module is public-frontend focused.  
-The Azure examples requiring an internal load balancer therefore use direct AzureRM resources.
+Azure internal load balancer scenarios now use:
+
+- `terraform-az-fk-loadbalancer`
 
 Why:
 
-- the architecture needs ILB behavior now
-- the module catalog does not yet cover that exact case cleanly
+- keeps Azure load balancer behavior inside a dedicated reusable module
+- preserves consistency between public and private frontend patterns
+- removes raw internal load balancer resources from the orchestrator
 
-This is a temporary, explicit tradeoff.
+The module was extended in a backward-compatible way so existing public load balancer consumers do not require refactoring.
 
 ---
 

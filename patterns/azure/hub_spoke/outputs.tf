@@ -39,5 +39,5 @@ output "vm_private_ips" {
 }
 
 output "internal_load_balancer_private_ip" {
-  value = try(azurerm_lb.internal[0].frontend_ip_configuration[0].private_ip_address, null)
+  value = try(module.internal_load_balancer[0].private_ip_address, null)
 }

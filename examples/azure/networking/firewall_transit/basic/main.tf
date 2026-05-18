@@ -1,6 +1,16 @@
+locals {
+  effective_admin_ssh_public_key = trimspace(var.admin_ssh_public_key) != "" ? trimspace(var.admin_ssh_public_key) : tls_private_key.generated[0].public_key_openssh
+}
+
+resource "tls_private_key" "generated" {
+  count     = trimspace(var.admin_ssh_public_key) == "" ? 1 : 0
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 module "landing_zone" {
   source = "../../../../../patterns/azure/firewall_transit"
 
   payload_file         = "${path.module}/landing-zone.yaml"
-  admin_ssh_public_key = var.admin_ssh_public_key
+  admin_ssh_public_key = local.effective_admin_ssh_public_key
 }

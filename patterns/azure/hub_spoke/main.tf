@@ -306,46 +306,42 @@ module "private_dns" {
   tags                   = local.tags
 }
 
-resource "azurerm_lb" "internal" {
-  count               = local.features.internal_load_balancer && local.load_balancer.enabled ? 1 : 0
+module "internal_load_balancer" {
+  count  = local.features.internal_load_balancer && local.load_balancer.enabled ? 1 : 0
+  source = "git::https://github.com/mlinxfeld/terraform-az-fk-loadbalancer.git?ref=v1.2.0"
+
   name                = local.load_balancer.name
   location            = local.location
   resource_group_name = azurerm_resource_group.this.name
-  sku                 = "Standard"
 
-  frontend_ip_configuration {
-    name                          = "internal-frontend"
-    subnet_id                     = module.spoke_vnets["app"].subnet_ids["frontend"]
-    private_ip_address_allocation = "Dynamic"
+  frontend_type                 = "private"
+  frontend_name                 = "internal-frontend"
+  private_frontend_subnet_id    = local.load_balancer_frontend_subnet_id
+  private_ip_address_allocation = try(local.load_balancer.private_ip_address, null) != null ? "Static" : "Dynamic"
+  private_ip_address            = try(local.load_balancer.private_ip_address, null)
+
+  backend_pool_name = "app-backend-pool"
+
+  probe = {
+    name                = "app-health-probe"
+    protocol            = local.load_balancer.health_probe.protocol
+    port                = local.load_balancer.health_probe.port
+    interval_in_seconds = try(local.load_balancer.health_probe.interval_in_seconds, 5)
+    number_of_probes    = try(local.load_balancer.health_probe.number_of_probes, 2)
+    request_path        = try(local.load_balancer.health_probe.request_path, null)
+  }
+
+  rule = {
+    name                    = "app-listener"
+    protocol                = local.load_balancer.listener.protocol
+    frontend_port           = local.load_balancer.listener.port
+    backend_port            = try(local.load_balancer.listener.backend_port, local.load_balancer.listener.port)
+    idle_timeout_in_minutes = try(local.load_balancer.listener.idle_timeout_in_minutes, null)
+    enable_floating_ip      = try(local.load_balancer.listener.enable_floating_ip, null)
+    disable_outbound_snat   = try(local.load_balancer.listener.disable_outbound_snat, null)
   }
 
   tags = local.tags
-}
-
-resource "azurerm_lb_backend_address_pool" "internal" {
-  count           = local.features.internal_load_balancer && local.load_balancer.enabled ? 1 : 0
-  name            = "app-backend-pool"
-  loadbalancer_id = azurerm_lb.internal[0].id
-}
-
-resource "azurerm_lb_probe" "internal" {
-  count           = local.features.internal_load_balancer && local.load_balancer.enabled ? 1 : 0
-  name            = "app-health-probe"
-  loadbalancer_id = azurerm_lb.internal[0].id
-  protocol        = local.load_balancer.health_probe.protocol
-  port            = local.load_balancer.health_probe.port
-}
-
-resource "azurerm_lb_rule" "internal" {
-  count                          = local.features.internal_load_balancer && local.load_balancer.enabled ? 1 : 0
-  name                           = "app-listener"
-  loadbalancer_id                = azurerm_lb.internal[0].id
-  protocol                       = local.load_balancer.listener.protocol
-  frontend_port                  = local.load_balancer.listener.port
-  backend_port                   = local.load_balancer.listener.port
-  frontend_ip_configuration_name = "internal-frontend"
-  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.internal[0].id]
-  probe_id                       = azurerm_lb_probe.internal[0].id
 }
 
 module "compute" {
@@ -363,7 +359,7 @@ module "compute" {
   image_reference     = each.value.image
   custom_data         = each.value.custom_data
   lb_attachment = contains(local.load_balancer_backend_refs, each.key) && local.features.internal_load_balancer && local.load_balancer.enabled ? {
-    backend_pool_id = azurerm_lb_backend_address_pool.internal[0].id
+    backend_pool_id = module.internal_load_balancer[0].backend_pool_id
   } : null
   tags = merge(local.tags, { workload = each.key })
 }

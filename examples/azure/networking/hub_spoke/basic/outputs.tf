@@ -33,3 +33,8 @@ output "vm_private_ips" {
 output "internal_load_balancer_private_ip" {
   value = module.landing_zone.internal_load_balancer_private_ip
 }
+
+output "generated_admin_ssh_private_key_pem" {
+  value     = try(tls_private_key.generated[0].private_key_pem, null)
+  sensitive = true
+}

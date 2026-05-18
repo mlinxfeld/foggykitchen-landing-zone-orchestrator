@@ -76,7 +76,7 @@ The payload is expected to describe sections such as:
 
 ## ⚠️ Current Notes
 
-- the internal load balancer is currently implemented with raw AzureRM resources
+- the internal load balancer uses `terraform-az-fk-loadbalancer` with a private frontend
 - this pattern acts as the shared base for the Azure `private_endpoint` pattern
 
 ---

@@ -64,8 +64,7 @@ The wrapper passes the payload into the shared HCL pattern, so the pattern code 
 - `terraform-az-fk-bastion` for secure operator access
 - `terraform-az-fk-private-dns` for private DNS zones and VNet links
 - `terraform-az-fk-compute` for the application VM
-
-The internal load balancer is created directly with AzureRM because the current FoggyKitchen load balancer module is public-LB oriented.
+- `terraform-az-fk-loadbalancer` for the internal application load balancer
 
 ---
 
@@ -75,16 +74,22 @@ OpenTofu:
 
 ```bash
 tofu init
-tofu plan -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
-tofu apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
+tofu plan
+tofu apply
 ```
 
 Terraform:
 
 ```bash
 terraform init
-terraform plan -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
-terraform apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
+terraform plan
+terraform apply
+```
+
+If you want to inject your own public key instead of generating one automatically, pass:
+
+```bash
+tofu apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
 ```
 
 ---
@@ -98,6 +103,7 @@ terraform apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
 - Bastion name
 - app VM private IP
 - internal load balancer private IP
+- generated admin SSH private key PEM when `admin_ssh_public_key` is left empty
 
 ---
 
@@ -106,13 +112,13 @@ terraform apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
 OpenTofu:
 
 ```bash
-tofu destroy -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
+tofu destroy
 ```
 
 Terraform:
 
 ```bash
-terraform destroy -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
+terraform destroy
 ```
 
 ---
@@ -122,7 +128,6 @@ terraform destroy -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
 - Route tables are explicit, but transit next-hop routes are only injected when a future firewall or NVA next hop is enabled.
 - Azure Firewall is intentionally out of MVP scope.
 - Private Endpoint integration is a planned next step.
-- The current FoggyKitchen load balancer module is not yet suitable for an internal frontend pattern.
 
 ---
 

@@ -23,7 +23,7 @@ The goal of this map is to show how the repository turns individual modules into
 | `terraform-az-fk-bastion` | Secure operator access |
 | `terraform-az-fk-private-dns` | Private name resolution layer |
 | `terraform-az-fk-compute` | Workload layer |
-| `terraform-az-fk-loadbalancer` | Public traffic entry contract |
+| `terraform-az-fk-loadbalancer` | Public and private traffic entry contract |
 | `terraform-az-fk-storage` | Storage service layer |
 | `terraform-az-fk-private-endpoint` | Private service exposure |
 | `terraform-az-fk-firewall` | Central inspection and transit boundary |
@@ -45,10 +45,7 @@ Uses:
 - `terraform-az-fk-bastion`
 - `terraform-az-fk-private-dns`
 - `terraform-az-fk-compute`
-
-Notes:
-
-- internal load balancer is currently implemented directly with AzureRM
+- `terraform-az-fk-loadbalancer`
 
 ### `patterns/azure/private_endpoint`
 
@@ -133,7 +130,6 @@ This is currently intentional and transitional.
 
 The current module map does not yet include dedicated FoggyKitchen modules for:
 
-- Azure internal load balancer patterns
 - Azure ExpressRoute edge resources
 - OCI FastConnect edge resources
 - OCI interconnect-specific DRG edge abstractions

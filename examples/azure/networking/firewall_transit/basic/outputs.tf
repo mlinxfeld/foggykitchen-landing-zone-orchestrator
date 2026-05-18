@@ -29,3 +29,8 @@ output "route_table_ids" {
 output "vm_private_ips" {
   value = module.landing_zone.vm_private_ips
 }
+
+output "generated_admin_ssh_private_key_pem" {
+  value     = try(tls_private_key.generated[0].private_key_pem, null)
+  sensitive = true
+}
