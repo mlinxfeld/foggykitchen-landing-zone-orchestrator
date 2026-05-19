@@ -85,6 +85,11 @@ Not every Azure pattern uses all sections.
 - optional `compute`
 - optional `load_balancer`
 
+For NAT naming, the Azure hub-and-spoke pattern also accepts optional maps:
+
+- `nat_gateway.names.<vnet_key>`
+- `nat_gateway.public_ip_names.<vnet_key>`
+
 When `routing` is used for explicit transit, the Azure hub-and-spoke pattern also accepts:
 
 - `routing.route_tables.<name>.subnet_refs`

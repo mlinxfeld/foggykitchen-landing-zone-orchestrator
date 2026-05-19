@@ -87,6 +87,12 @@ security:
 
 nat_gateway:
   enabled: true
+  names:
+    app: natgw-fk-app-dev
+    data: natgw-fk-data-dev
+  public_ip_names:
+    app: natgw-fk-app-dev-pip
+    data: natgw-fk-data-dev-pip
   attach_to_subnets:
     - app.backend
     - data.database
