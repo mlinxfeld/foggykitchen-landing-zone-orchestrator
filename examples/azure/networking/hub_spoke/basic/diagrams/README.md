@@ -1,18 +1,18 @@
 # Diagrams
 
-This directory is reserved for **architecture images and related visual assets** for the Azure hub-and-spoke example.
+This directory stores **architecture images and related visual assets** for the Azure hub-and-spoke example.
 
 ---
 
 ## 🎯 Purpose
 
-Expected assets may include:
+Current assets:
 
-- `azure-hub-spoke-landing-zone.png`
-- topology refinements
-- validation screenshots
+- [`azure-hub-spoke-architecture.png`](azure-hub-spoke-architecture.png)
 
-The repository structure is ready for those assets even when the image itself is added later.
+The main example README embeds this diagram directly:
+
+- [`../README.md`](../README.md)
 
 ---
 

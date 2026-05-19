@@ -2,6 +2,8 @@
 
 This example provides one payload for the shared **Azure hub-and-spoke orchestrator pattern**.
 
+![Azure hub-and-spoke architecture](diagrams/azure-hub-spoke-architecture.png)
+
 ---
 
 ## 🎯 Purpose
