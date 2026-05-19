@@ -9,6 +9,7 @@ This directory contains **Azure networking-oriented landing zone examples** buil
 The goal of this section is to make Azure network patterns easy to discover and compare:
 
 - baseline hub-and-spoke
+- hub-and-spoke router VM transit
 - firewall transit
 - private endpoint service exposure
 
@@ -16,7 +17,7 @@ The goal of this section is to make Azure network patterns easy to discover and 
 
 ## 📂 Available Examples
 
-- [Hub-and-spoke basic](hub_spoke/basic/README.md)
+- [Hub-and-spoke examples](hub_spoke/README.md)
 - [Firewall transit basic](firewall_transit/basic/README.md)
 - [Private endpoint with Storage Private Link](private_endpoint/storage_private_link/README.md)
 

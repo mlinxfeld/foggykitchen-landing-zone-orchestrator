@@ -18,12 +18,12 @@ cloud:
 architecture:
   topology: hub_spoke
   access_model: private_first
-  routing_model: route_table_scaffold
+  routing_model: none
   security_model: deny_by_default
 
 features:
   vnet_peering: true
-  routing: true
+  routing: false
   nsg: true
   nat_gateway: true
   bastion: true
@@ -43,7 +43,7 @@ networking:
         name: AzureBastionSubnet
         cidr: 10.10.0.0/26
       shared:
-        name: snet-shared-services
+        name: snet-fk-shared-services
         cidr: 10.10.1.0/24
 
   spokes:
@@ -53,10 +53,10 @@ networking:
         - 10.20.0.0/16
       subnets:
         frontend:
-          name: snet-app-frontend
+          name: snet-fk-app-frontend
           cidr: 10.20.1.0/24
         backend:
-          name: snet-app-backend
+          name: snet-fk-app-backend
           cidr: 10.20.2.0/24
 
     data:
@@ -65,10 +65,10 @@ networking:
         - 10.30.0.0/16
       subnets:
         database:
-          name: snet-data-private
+          name: snet-fk-data-private
           cidr: 10.30.1.0/24
         private_endpoints:
-          name: snet-data-private-endpoints
+          name: snet-fk-data-private-endpoints
           cidr: 10.30.2.0/24
 
 peering:
@@ -76,18 +76,6 @@ peering:
   allow_forwarded_traffic: true
   allow_gateway_transit: false
   use_remote_gateways: false
-
-routing:
-  enabled: true
-  mode: basic_hub_spoke
-  spoke_to_spoke:
-    enabled: false
-    via: none
-  default_route:
-    enabled: false
-  firewall_next_hop:
-    enabled: false
-    ip_address: null
 
 security:
   nsg:

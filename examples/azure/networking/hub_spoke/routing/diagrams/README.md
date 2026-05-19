@@ -1,6 +1,6 @@
 # Diagrams
 
-This directory stores **architecture images and related visual assets** for the Azure hub-and-spoke example.
+This directory stores **architecture images and related visual assets** for the Azure hub-and-spoke routing example.
 
 ---
 
@@ -8,7 +8,7 @@ This directory stores **architecture images and related visual assets** for the 
 
 Current assets:
 
-- [`azure-hub-spoke-basic-architecture.png`](azure-hub-spoke-basic-architecture.png)
+- [`azure-hub-spoke-routing-architecture.png`](azure-hub-spoke-routing-architecture.png)
 
 The main example README embeds this diagram directly:
 

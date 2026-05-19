@@ -28,6 +28,10 @@ output "bastion_name" {
   value = try(module.bastion[0].bastion_name, null)
 }
 
+output "route_table_ids" {
+  value = try(module.routing[0].route_table_ids, {})
+}
+
 output "private_dns_zone_ids" {
   value = length(module.private_dns) > 0 ? merge([for _, mod in module.private_dns : mod.private_dns_zone_ids]...) : {}
 }

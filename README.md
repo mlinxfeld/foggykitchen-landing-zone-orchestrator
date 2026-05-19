@@ -76,7 +76,9 @@ foggykitchen-landing-zone-orchestrator/
 │   │       ├── firewall_transit/
 │   │       │   └── basic/
 │   │       ├── hub_spoke/
-│   │       │   └── basic/
+│   │       │   ├── README.md
+│   │       │   ├── basic/
+│   │       │   └── routing/
 │   │       └── private_endpoint/
 │   │           └── storage_private_link/
 │   ├── oci/
@@ -115,6 +117,7 @@ foggykitchen-landing-zone-orchestrator/
 Currently implemented:
 
 - [examples/azure/networking/hub_spoke/basic](examples/azure/networking/hub_spoke/basic/README.md)
+- [examples/azure/networking/hub_spoke/routing](examples/azure/networking/hub_spoke/routing/README.md)
 - [examples/azure/networking/firewall_transit/basic](examples/azure/networking/firewall_transit/basic/README.md)
 - [examples/azure/networking/private_endpoint/storage_private_link](examples/azure/networking/private_endpoint/storage_private_link/README.md)
 - [examples/oci/networking/drg_hub_spoke/basic](examples/oci/networking/drg_hub_spoke/basic/README.md)

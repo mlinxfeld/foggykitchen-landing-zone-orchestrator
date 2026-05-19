@@ -11,7 +11,7 @@ The goal of this pattern is to provide a reusable Azure networking foundation wi
 - one hub VNet
 - multiple spoke VNets
 - peering
-- route table attachment
+- optional route table orchestration
 - NSG baselines
 - NAT, Bastion, and Private DNS as optional capabilities
 - private VM placement
@@ -48,6 +48,7 @@ The pattern composes:
 This pattern is consumed by:
 
 - [`examples/azure/networking/hub_spoke/basic`](../../../../examples/azure/networking/hub_spoke/basic/README.md)
+- [`examples/azure/networking/hub_spoke/routing`](../../../../examples/azure/networking/hub_spoke/routing/README.md)
 
 ---
 
@@ -72,6 +73,8 @@ The payload is expected to describe sections such as:
 - `compute`
 - `load_balancer`
 
+When transit routing is needed, the payload can also declare explicit `routing.route_tables` and point UDR next hops at a compute instance through `next_hop_vm_ref`.
+
 ---
 
 ## ⚠️ Current Notes
@@ -90,6 +93,7 @@ The pattern exposes outputs for:
 - subnet IDs
 - NAT public IP
 - Bastion name
+- route table IDs
 - Private DNS zone IDs
 - VM private IPs
 - internal load balancer private IP

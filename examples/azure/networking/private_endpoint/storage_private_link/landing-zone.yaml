@@ -43,7 +43,7 @@ networking:
         name: AzureBastionSubnet
         cidr: 10.110.0.0/26
       shared:
-        name: snet-shared-services
+        name: snet-fk-shared-services
         cidr: 10.110.1.0/24
       firewall:
         name: AzureFirewallSubnet

@@ -83,13 +83,18 @@ Focus:
 - core network boundary
 - hub and spokes
 - peering
-- route tables
+- optional route tables
 - NSGs
 - NAT
 - Bastion
-- private DNS
-- private VM workload
-- internal load balancer
+- optional private DNS
+- optional private VM workload
+- optional internal load balancer
+
+Example variants:
+
+- `basic` for pure network foundation
+- `routing` for router-VM-based spoke-to-spoke transit
 
 ### Azure Private Endpoint
 

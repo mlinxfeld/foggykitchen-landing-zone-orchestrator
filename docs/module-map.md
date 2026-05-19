@@ -38,7 +38,6 @@ Uses:
 
 - `terraform-az-fk-vnet`
 - `terraform-az-fk-vnet-peering`
-- `terraform-az-fk-routing`
 - `terraform-az-fk-nsg`
 - `terraform-az-fk-public-ip`
 - `terraform-az-fk-natgw`
@@ -46,6 +45,10 @@ Uses:
 - `terraform-az-fk-private-dns`
 - `terraform-az-fk-compute`
 - `terraform-az-fk-loadbalancer`
+
+Optional by payload:
+
+- `terraform-az-fk-routing`
 
 ### `patterns/azure/private_endpoint`
 

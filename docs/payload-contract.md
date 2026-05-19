@@ -77,13 +77,35 @@ Not every Azure pattern uses all sections.
 - `features`
 - `networking`
 - `peering`
-- `routing`
+- optional `routing`
 - `security`
 - `nat_gateway`
 - `bastion`
-- `private_dns`
-- `compute`
-- `load_balancer`
+- optional `private_dns`
+- optional `compute`
+- optional `load_balancer`
+
+When `routing` is used for explicit transit, the Azure hub-and-spoke pattern also accepts:
+
+- `routing.route_tables.<name>.subnet_refs`
+- `routing.route_tables.<name>.routes[]`
+- `routing.route_tables.<name>.routes[].next_hop_vm_ref`
+
+Example:
+
+```yaml
+routing:
+  enabled: true
+  route_tables:
+    rt-app-backend:
+      subnet_refs:
+        - app.backend
+      routes:
+        - name: to-data-via-router
+          address_prefix: 10.30.0.0/16
+          next_hop_type: VirtualAppliance
+          next_hop_vm_ref: hubrouter
+```
 
 `private_endpoint` extends that with:
 

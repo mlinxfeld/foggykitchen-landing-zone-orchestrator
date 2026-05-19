@@ -2,7 +2,7 @@
 
 This example provides one payload for the shared **Azure hub-and-spoke orchestrator pattern**.
 
-![Azure hub-and-spoke architecture](diagrams/azure-hub-spoke-architecture.png)
+![Azure hub-and-spoke architecture](diagrams/azure-hub-spoke-basic-architecture.png)
 
 ---
 
@@ -11,7 +11,6 @@ This example provides one payload for the shared **Azure hub-and-spoke orchestra
 The goal of this example is to show a **clean, reusable Azure landing zone composition** built from FoggyKitchen modules:
 
 - hub-and-spoke networking
-- route table scaffolding for hub-and-spoke subnets
 - subnet-level security boundaries
 - NAT-based outbound access
 - Bastion-based operator access
@@ -28,7 +27,6 @@ This example composes:
 - one app spoke VNet
 - one data spoke VNet
 - hub-to-spoke peering
-- route tables attached to spoke subnets
 - subnet-level NSGs
 - NAT Gateway on selected private subnets
 - Azure Bastion in the hub
@@ -59,7 +57,6 @@ It prepares the network, security, peering, egress, and operator-access layers w
 
 - `terraform-az-fk-vnet` for hub and spoke VNets
 - `terraform-az-fk-vnet-peering` for connectivity
-- `terraform-az-fk-routing` for route table orchestration
 - `terraform-az-fk-nsg` for subnet-level security boundaries
 - `terraform-az-fk-public-ip` for NAT public identity
 - `terraform-az-fk-natgw` for outbound egress
@@ -115,10 +112,9 @@ terraform destroy
 
 ## ⚠️ Known Limitations
 
-- Route tables are explicit, but this example does not provide hub-based spoke-to-spoke transit.
 - No application, database, or shared-services VMs are deployed in this basic scaffold.
 - Private DNS and private endpoints are addressed separately by the `private_endpoint` pattern.
-- Azure Firewall transit is addressed separately by the `firewall_transit` pattern.
+- Hub-based transit routing is addressed separately by the `hub_spoke/routing` and `firewall_transit` patterns.
 
 ---
 

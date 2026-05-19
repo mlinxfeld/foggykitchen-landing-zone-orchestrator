@@ -64,7 +64,7 @@ module "hub_to_spoke_peering" {
 }
 
 module "routing" {
-  count  = local.features.routing && local.routing.enabled ? 1 : 0
+  count  = local.features.routing && try(local.routing.enabled, false) ? 1 : 0
   source = "git::https://github.com/mlinxfeld/terraform-az-fk-routing.git?ref=main"
 
   resource_group_name = azurerm_resource_group.this.name
@@ -137,44 +137,48 @@ module "app_backend_nsg" {
   name                = "nsg-app-backend"
   location            = local.location
   resource_group_name = azurerm_resource_group.this.name
-  rules = [
-    {
-      name                       = "allow-http-from-azure-lb"
-      priority                   = 100
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = tostring(local.load_balancer.listener.port)
-      source_address_prefix      = "AzureLoadBalancer"
-      destination_address_prefix = "*"
-      description                = "Allow application traffic from the internal load balancer."
-    },
-    {
-      name                       = "allow-ssh-from-bastion"
-      priority                   = 110
-      direction                  = "Inbound"
-      access                     = "Allow"
-      protocol                   = "Tcp"
-      source_port_range          = "*"
-      destination_port_range     = "22"
-      source_address_prefix      = local.subnet_cidrs_by_ref["hub.bastion"]
-      destination_address_prefix = "*"
-      description                = "Allow operator SSH only from Azure Bastion subnet."
-    },
-    {
-      name                       = "deny-internet-inbound"
-      priority                   = 4000
-      direction                  = "Inbound"
-      access                     = "Deny"
-      protocol                   = "*"
-      source_port_range          = "*"
-      destination_port_range     = "*"
-      source_address_prefix      = "Internet"
-      destination_address_prefix = "*"
-      description                = "Deny direct inbound traffic from the Internet."
-    }
-  ]
+  rules = concat(
+    local.features.internal_load_balancer && try(local.load_balancer.enabled, false) ? [
+      {
+        name                       = "allow-http-from-azure-lb"
+        priority                   = 100
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = tostring(local.load_balancer.listener.port)
+        source_address_prefix      = "AzureLoadBalancer"
+        destination_address_prefix = "*"
+        description                = "Allow application traffic from the internal load balancer."
+      }
+    ] : [],
+    [
+      {
+        name                       = "allow-ssh-from-bastion"
+        priority                   = 110
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "22"
+        source_address_prefix      = local.subnet_cidrs_by_ref["hub.bastion"]
+        destination_address_prefix = "*"
+        description                = "Allow operator SSH only from Azure Bastion subnet."
+      },
+      {
+        name                       = "deny-internet-inbound"
+        priority                   = 4000
+        direction                  = "Inbound"
+        access                     = "Deny"
+        protocol                   = "*"
+        source_port_range          = "*"
+        destination_port_range     = "*"
+        source_address_prefix      = "Internet"
+        destination_address_prefix = "*"
+        description                = "Deny direct inbound traffic from the Internet."
+      }
+    ]
+  )
   subnet_associations = {
     backend = {
       subnet_id = module.spoke_vnets["app"].subnet_ids["backend"]
@@ -253,6 +257,42 @@ module "data_private_endpoints_nsg" {
   tags = local.tags
 }
 
+module "router_vm_nsg" {
+  count  = local.features.nsg && local.security.nsg.enabled && length(local.route_next_hop_vm_refs) > 0 ? 1 : 0
+  source = "git::https://github.com/mlinxfeld/terraform-az-fk-nsg.git?ref=main"
+
+  name                = "nsg-fk-router-01"
+  location            = local.location
+  resource_group_name = azurerm_resource_group.this.name
+  rules = [
+    {
+      name                       = "allow-spokes-inbound"
+      priority                   = 100
+      direction                  = "Inbound"
+      access                     = "Allow"
+      protocol                   = "*"
+      source_port_range          = "*"
+      destination_port_range     = "*"
+      source_address_prefixes    = [for _, spoke in local.spokes : spoke.address_space[0]]
+      destination_address_prefix = "*"
+      description                = "Allow forwarded traffic from all spoke VNets to the router VM."
+    },
+    {
+      name                         = "allow-spokes-outbound"
+      priority                     = 110
+      direction                    = "Outbound"
+      access                       = "Allow"
+      protocol                     = "*"
+      source_port_range            = "*"
+      destination_port_range       = "*"
+      source_address_prefix        = "*"
+      destination_address_prefixes = [for _, spoke in local.spokes : spoke.address_space[0]]
+      description                  = "Allow forwarded traffic from the router VM back to all spoke VNets."
+    }
+  ]
+  tags = local.tags
+}
+
 module "nat_public_ip" {
   count  = local.features.nat_gateway && local.nat_gateway.enabled ? 1 : 0
   source = "git::https://github.com/mlinxfeld/terraform-az-fk-public-ip.git?ref=main"
@@ -307,7 +347,7 @@ module "private_dns" {
 }
 
 module "internal_load_balancer" {
-  count  = local.features.internal_load_balancer && local.load_balancer.enabled ? 1 : 0
+  count  = local.features.internal_load_balancer && try(local.load_balancer.enabled, false) ? 1 : 0
   source = "git::https://github.com/mlinxfeld/terraform-az-fk-loadbalancer.git?ref=v1.2.0"
 
   name                = local.load_balancer.name
@@ -345,20 +385,26 @@ module "internal_load_balancer" {
 }
 
 module "compute" {
-  for_each = local.features.compute && local.compute.enabled ? local.compute_instances : {}
+  for_each = local.features.compute && try(local.compute.enabled, false) ? local.compute_instances : {}
   source   = "git::https://github.com/mlinxfeld/terraform-az-fk-compute.git?ref=v0.3.5"
 
-  name                = each.value.name
-  location            = local.location
-  resource_group_name = azurerm_resource_group.this.name
-  subnet_id           = module.spoke_vnets[split(".", each.value.subnet_ref)[0]].subnet_ids[split(".", each.value.subnet_ref)[1]]
-  vm_size             = each.value.size
-  admin_username      = each.value.admin_username
-  ssh_public_key      = var.admin_ssh_public_key
-  identity_type       = "SystemAssigned"
-  image_reference     = each.value.image
-  custom_data         = each.value.custom_data
-  lb_attachment = contains(local.load_balancer_backend_refs, each.key) && local.features.internal_load_balancer && local.load_balancer.enabled ? {
+  name                          = each.value.name
+  location                      = local.location
+  resource_group_name           = azurerm_resource_group.this.name
+  subnet_id                     = local.subnet_ids_by_ref[each.value.subnet_ref]
+  deployment_mode               = each.value.deployment_mode
+  vm_size                       = each.value.size
+  admin_username                = each.value.admin_username
+  ssh_public_key                = var.admin_ssh_public_key
+  identity_type                 = each.value.identity_type
+  image_reference               = each.value.image
+  custom_data                   = each.value.custom_data
+  enable_ip_forwarding          = each.value.enable_ip_forwarding
+  private_ip_address_allocation = each.value.private_ip_address_allocation
+  private_ip_address            = each.value.private_ip_address
+  attach_nsg_to_nic             = each.value.attach_nsg_to_nic
+  nsg_id                        = each.value.nsg_id
+  lb_attachment = contains(local.load_balancer_backend_refs, each.key) && local.features.internal_load_balancer && try(local.load_balancer.enabled, false) ? {
     backend_pool_id = module.internal_load_balancer[0].backend_pool_id
   } : null
   tags = merge(local.tags, { workload = each.key })

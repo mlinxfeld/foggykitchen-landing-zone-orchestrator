@@ -1,0 +1,163 @@
+landing_zone:
+  name: fk-azure-lz-routing-dev
+  environment: dev
+  owner: foggykitchen
+  default_tags:
+    project: foggykitchen
+    environment: dev
+    managed_by: opentofu
+    landing_zone: fk-azure-lz-routing-dev
+
+cloud:
+  provider: azure
+  location: westeurope
+  resource_group:
+    create: true
+    name: rg-fk-azure-lz-routing-dev
+
+architecture:
+  topology: hub_spoke
+  access_model: private_first
+  routing_model: router_vm_transit
+  security_model: deny_by_default
+
+features:
+  vnet_peering: true
+  routing: true
+  nsg: true
+  nat_gateway: true
+  bastion: true
+  private_dns: false
+  compute: true
+  internal_load_balancer: false
+  firewall: false
+  private_endpoint: false
+
+networking:
+  hub:
+    name: vnet-fk-hub-routing-dev
+    address_space:
+      - 10.10.0.0/16
+    subnets:
+      bastion:
+        name: AzureBastionSubnet
+        cidr: 10.10.0.0/26
+      shared:
+        name: snet-fk-shared-services
+        cidr: 10.10.1.0/24
+
+  spokes:
+    app:
+      name: vnet-fk-app-routing-dev
+      address_space:
+        - 10.20.0.0/16
+      subnets:
+        frontend:
+          name: snet-fk-app-frontend
+          cidr: 10.20.1.0/24
+        backend:
+          name: snet-fk-app-backend
+          cidr: 10.20.2.0/24
+
+    data:
+      name: vnet-fk-data-routing-dev
+      address_space:
+        - 10.30.0.0/16
+      subnets:
+        database:
+          name: snet-fk-data-private
+          cidr: 10.30.1.0/24
+        private_endpoints:
+          name: snet-fk-data-private-endpoints
+          cidr: 10.30.2.0/24
+
+peering:
+  hub_to_spokes: true
+  allow_forwarded_traffic: true
+  allow_gateway_transit: false
+  use_remote_gateways: false
+
+routing:
+  enabled: true
+  route_tables:
+    rt-app-backend:
+      subnet_refs:
+        - app.backend
+      routes:
+        - name: to-data-via-router
+          address_prefix: 10.30.0.0/16
+          next_hop_type: VirtualAppliance
+          next_hop_vm_ref: hubrouter
+    rt-data-database:
+      subnet_refs:
+        - data.database
+      routes:
+        - name: to-app-via-router
+          address_prefix: 10.20.0.0/16
+          next_hop_type: VirtualAppliance
+          next_hop_vm_ref: hubrouter
+
+security:
+  nsg:
+    enabled: true
+    baseline_rules:
+      deny_internet_inbound: true
+      allow_http_from_load_balancer: false
+      allow_ssh_from_bastion_or_hub: true
+
+nat_gateway:
+  enabled: true
+  attach_to_subnets:
+    - app.backend
+    - data.database
+
+bastion:
+  enabled: true
+  name: bastion-fk-routing-dev
+  subnet_ref: hub.bastion
+  sku: Standard
+
+compute:
+  enabled: true
+  instances:
+    hubrouter:
+      name: vm-fk-router-01
+      subnet_ref: hub.shared
+      size: Standard_B2s
+      admin_username: azureuser
+      enable_ip_forwarding: true
+      attach_nsg_to_nic: true
+      private_ip_address_allocation: Static
+      private_ip_address: 10.10.1.4
+      image:
+        publisher: Canonical
+        offer: ubuntu-24_04-lts
+        sku: server
+        version: latest
+      cloud_init: scripts/enable-ip-forwarding.sh
+    app01:
+      name: vm-fk-app-routing-01
+      subnet_ref: app.backend
+      size: Standard_B2s
+      admin_username: azureuser
+      private_ip_address_allocation: Static
+      private_ip_address: 10.20.2.4
+      image:
+        publisher: Canonical
+        offer: ubuntu-24_04-lts
+        sku: server
+        version: latest
+      cloud_init: scripts/install-network-tools.sh
+    db01:
+      name: vm-fk-db-routing-01
+      subnet_ref: data.database
+      size: Standard_B2s
+      admin_username: azureuser
+      private_ip_address_allocation: Static
+      private_ip_address: 10.30.1.4
+      image:
+        publisher: Canonical
+        offer: ubuntu-24_04-lts
+        sku: server
+        version: latest
+      cloud_init: scripts/install-network-tools.sh

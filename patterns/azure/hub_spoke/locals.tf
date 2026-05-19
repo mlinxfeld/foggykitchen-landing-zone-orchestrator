@@ -6,13 +6,13 @@ locals {
   features      = local.config.features
   networking    = local.config.networking
   peering       = local.config.peering
-  routing       = local.config.routing
+  routing       = try(local.config.routing, { enabled = false })
   security      = local.config.security
   nat_gateway   = local.config.nat_gateway
   bastion       = local.config.bastion
-  private_dns   = local.config.private_dns
-  compute       = local.config.compute
-  load_balancer = local.config.load_balancer
+  private_dns   = try(local.config.private_dns, { enabled = false })
+  compute       = try(local.config.compute, { enabled = false })
+  load_balancer = try(local.config.load_balancer, { enabled = false })
 
   payload_dir = dirname(var.payload_file)
 
@@ -60,6 +60,15 @@ locals {
     ]...)
   )
 
+  subnet_ids_by_ref = merge(
+    { for subnet_key, subnet_id in module.hub_vnet.subnet_ids : "hub.${subnet_key}" => subnet_id },
+    merge([
+      for spoke_key, mod in module.spoke_vnets : {
+        for subnet_key, subnet_id in mod.subnet_ids : "${spoke_key}.${subnet_key}" => subnet_id
+      }
+    ]...)
+  )
+
   vnet_ids_by_ref = merge(
     {
       hub = module.hub_vnet.vnet_id
@@ -71,17 +80,30 @@ locals {
 
   nat_subnet_refs = toset(try(local.nat_gateway.attach_to_subnets, []))
 
+  route_next_hop_vm_refs = toset(flatten([
+    for _, route_table in try(local.routing.route_tables, {}) : [
+      for route in try(route_table.routes, []) : try(route.next_hop_vm_ref, null)
+    ]
+  ]))
+
   compute_instances = {
     for instance_key, instance in try(local.compute.instances, {}) : instance_key => {
-      name           = instance.name
-      subnet_ref     = instance.subnet_ref
-      size           = instance.size
-      admin_username = instance.admin_username
+      name                          = instance.name
+      subnet_ref                    = instance.subnet_ref
+      size                          = instance.size
+      admin_username                = try(instance.admin_username, "azureuser")
+      deployment_mode               = try(instance.deployment_mode, "vm")
+      enable_ip_forwarding          = try(instance.enable_ip_forwarding, false)
+      private_ip_address_allocation = try(instance.private_ip_address_allocation, "Dynamic")
+      private_ip_address            = try(instance.private_ip_address, null)
+      attach_nsg_to_nic             = try(instance.attach_nsg_to_nic, false)
+      nsg_id                        = try(instance.nsg_id, null) != null ? instance.nsg_id : (contains(local.route_next_hop_vm_refs, instance_key) && try(instance.attach_nsg_to_nic, false) ? module.router_vm_nsg[0].id : null)
+      identity_type                 = try(instance.identity_type, "SystemAssigned")
       image = {
-        publisher = instance.image.publisher
-        offer     = instance.image.offer
-        sku       = instance.image.sku
-        version   = instance.image.version
+        publisher = try(instance.image.publisher, "Canonical")
+        offer     = try(instance.image.offer, "ubuntu-24_04-lts")
+        sku       = try(instance.image.sku, "server")
+        version   = try(instance.image.version, "latest")
       }
       custom_data = try(instance.cloud_init, null) != null ? filebase64("${local.payload_dir}/${instance.cloud_init}") : null
     }
@@ -91,51 +113,66 @@ locals {
 
   load_balancer_frontend_subnet_id = try(local.load_balancer.frontend_subnet_ref, null) != null ? module.spoke_vnets[split(".", local.load_balancer.frontend_subnet_ref)[0]].subnet_ids[split(".", local.load_balancer.frontend_subnet_ref)[1]] : null
 
-  route_tables = local.features.routing && local.routing.enabled ? {
-    app_frontend = {
-      location = local.location
-      routes = local.routing.firewall_next_hop.enabled ? [
-        {
-          name           = "default-via-firewall"
-          address_prefix = "0.0.0.0/0"
-          next_hop_type  = "VirtualAppliance"
-          next_hop_ip    = local.routing.firewall_next_hop.ip_address
-        }
-      ] : []
-      subnet_ids = [module.spoke_vnets["app"].subnet_ids["frontend"]]
+  route_tables = !local.features.routing || !try(local.routing.enabled, false) ? {} : (
+    try(local.routing.route_tables, null) != null ? {
+      for route_table_name, route_table in local.routing.route_tables : route_table_name => {
+        location = local.location
+        routes = [
+          for route in try(route_table.routes, []) : {
+            name           = route.name
+            address_prefix = route.address_prefix
+            next_hop_type  = route.next_hop_type
+            next_hop_ip    = route.next_hop_type == "VirtualAppliance" ? (try(route.next_hop_ip, null) != null ? route.next_hop_ip : try(module.compute[route.next_hop_vm_ref].vm_private_ip, null)) : null
+          }
+        ]
+        subnet_ids = [for subnet_ref in try(route_table.subnet_refs, []) : local.subnet_ids_by_ref[subnet_ref]]
+      }
+      } : {
+      app_frontend = {
+        location = local.location
+        routes = try(local.routing.firewall_next_hop.enabled, false) ? [
+          {
+            name           = "default-via-firewall"
+            address_prefix = "0.0.0.0/0"
+            next_hop_type  = "VirtualAppliance"
+            next_hop_ip    = local.routing.firewall_next_hop.ip_address
+          }
+        ] : []
+        subnet_ids = [module.spoke_vnets["app"].subnet_ids["frontend"]]
+      }
+      app_backend = {
+        location = local.location
+        routes = try(local.routing.firewall_next_hop.enabled, false) ? [
+          {
+            name           = "default-via-firewall"
+            address_prefix = "0.0.0.0/0"
+            next_hop_type  = "VirtualAppliance"
+            next_hop_ip    = local.routing.firewall_next_hop.ip_address
+          }
+        ] : []
+        subnet_ids = [module.spoke_vnets["app"].subnet_ids["backend"]]
+      }
+      data_database = {
+        location = local.location
+        routes = try(local.routing.firewall_next_hop.enabled, false) ? [
+          {
+            name           = "default-via-firewall"
+            address_prefix = "0.0.0.0/0"
+            next_hop_type  = "VirtualAppliance"
+            next_hop_ip    = local.routing.firewall_next_hop.ip_address
+          }
+        ] : []
+        subnet_ids = [module.spoke_vnets["data"].subnet_ids["database"]]
+      }
+      data_private_endpoints = {
+        location   = local.location
+        routes     = []
+        subnet_ids = [module.spoke_vnets["data"].subnet_ids["private_endpoints"]]
+      }
     }
-    app_backend = {
-      location = local.location
-      routes = local.routing.firewall_next_hop.enabled ? [
-        {
-          name           = "default-via-firewall"
-          address_prefix = "0.0.0.0/0"
-          next_hop_type  = "VirtualAppliance"
-          next_hop_ip    = local.routing.firewall_next_hop.ip_address
-        }
-      ] : []
-      subnet_ids = [module.spoke_vnets["app"].subnet_ids["backend"]]
-    }
-    data_database = {
-      location = local.location
-      routes = local.routing.firewall_next_hop.enabled ? [
-        {
-          name           = "default-via-firewall"
-          address_prefix = "0.0.0.0/0"
-          next_hop_type  = "VirtualAppliance"
-          next_hop_ip    = local.routing.firewall_next_hop.ip_address
-        }
-      ] : []
-      subnet_ids = [module.spoke_vnets["data"].subnet_ids["database"]]
-    }
-    data_private_endpoints = {
-      location   = local.location
-      routes     = []
-      subnet_ids = [module.spoke_vnets["data"].subnet_ids["private_endpoints"]]
-    }
-  } : {}
+  )
 
-  private_dns_zone_definitions = local.features.private_dns && local.private_dns.enabled ? (
+  private_dns_zone_definitions = local.features.private_dns && try(local.private_dns.enabled, false) ? (
     try(length(local.private_dns.zones), 0) > 0 && can(local.private_dns.zones[0].name) ? {
       for zone in local.private_dns.zones : zone.name => {
         link_to_vnets = toset(try(zone.link_to_vnets, try(local.private_dns.link_to_vnets, concat(["hub"], keys(local.spokes)))))
