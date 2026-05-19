@@ -297,12 +297,12 @@ module "bastion" {
 }
 
 module "private_dns" {
-  count  = local.features.private_dns && local.private_dns.enabled ? 1 : 0
-  source = "git::https://github.com/mlinxfeld/terraform-az-fk-private-dns.git?ref=main"
+  for_each = local.private_dns_zone_definitions
+  source   = "git::https://github.com/mlinxfeld/terraform-az-fk-private-dns.git?ref=main"
 
   resource_group_name    = azurerm_resource_group.this.name
-  private_dns_zone_names = toset(local.private_dns.zones)
-  vnet_links             = local.private_dns_vnet_links
+  private_dns_zone_names = toset([each.key])
+  vnet_links             = local.private_dns_vnet_links_by_zone[each.key]
   tags                   = local.tags
 }
 

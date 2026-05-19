@@ -60,6 +60,15 @@ locals {
     ]...)
   )
 
+  vnet_ids_by_ref = merge(
+    {
+      hub = module.hub_vnet.vnet_id
+    },
+    {
+      for spoke_key, mod in module.spoke_vnets : spoke_key => mod.vnet_id
+    }
+  )
+
   nat_subnet_refs = toset(try(local.nat_gateway.attach_to_subnets, []))
 
   compute_instances = {
@@ -126,18 +135,24 @@ locals {
     }
   } : {}
 
-  private_dns_vnet_links = local.features.private_dns && local.private_dns.enabled ? merge(
-    {
-      hub = {
-        vnet_id              = module.hub_vnet.vnet_id
-        registration_enabled = false
+  private_dns_zone_definitions = local.features.private_dns && local.private_dns.enabled ? (
+    try(length(local.private_dns.zones), 0) > 0 && can(local.private_dns.zones[0].name) ? {
+      for zone in local.private_dns.zones : zone.name => {
+        link_to_vnets = toset(try(zone.link_to_vnets, try(local.private_dns.link_to_vnets, concat(["hub"], keys(local.spokes)))))
       }
-    },
-    {
-      for spoke_key, mod in module.spoke_vnets : spoke_key => {
-        vnet_id              = mod.vnet_id
-        registration_enabled = false
+      } : {
+      for zone_name in try(local.private_dns.zones, []) : zone_name => {
+        link_to_vnets = toset(try(local.private_dns.link_to_vnets, concat(["hub"], keys(local.spokes))))
       }
     }
   ) : {}
+
+  private_dns_vnet_links_by_zone = {
+    for zone_name, zone in local.private_dns_zone_definitions : zone_name => {
+      for vnet_ref in zone.link_to_vnets : vnet_ref => {
+        vnet_id              = local.vnet_ids_by_ref[vnet_ref]
+        registration_enabled = false
+      }
+    }
+  }
 }

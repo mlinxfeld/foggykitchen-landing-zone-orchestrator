@@ -115,9 +115,15 @@ bastion:
 private_dns:
   enabled: true
   zones:
-    - privatelink.blob.core.windows.net
-    - privatelink.file.core.windows.net
-    - privatelink.database.windows.net
+    - name: privatelink.blob.core.windows.net
+      link_to_vnets:
+        - app
+    - name: privatelink.file.core.windows.net
+      link_to_vnets:
+        - app
+    - name: privatelink.database.windows.net
+      link_to_vnets:
+        - data
 
 compute:
   enabled: true

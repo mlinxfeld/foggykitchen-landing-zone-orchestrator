@@ -90,6 +90,27 @@ Not every Azure pattern uses all sections.
 - `storage`
 - `private_endpoints`
 
+For private DNS, a more explicit contract is:
+
+- `private_dns.zones[].name`
+- `private_dns.zones[].link_to_vnets`
+
+Example:
+
+```yaml
+private_dns:
+  enabled: true
+  zones:
+    - name: privatelink.blob.core.windows.net
+      link_to_vnets:
+        - app
+    - name: privatelink.file.core.windows.net
+      link_to_vnets:
+        - app
+```
+
+If the new per-zone structure is not used, the current Azure hub-and-spoke pattern falls back to the older shared-link behavior for backward compatibility.
+
 `firewall_transit` focuses on:
 
 - `networking`

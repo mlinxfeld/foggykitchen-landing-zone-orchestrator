@@ -18,7 +18,7 @@ cloud:
 architecture:
   topology: hub_spoke
   access_model: private_first
-  routing_model: centralized
+  routing_model: route_table_scaffold
   security_model: deny_by_default
 
 features:
@@ -27,9 +27,9 @@ features:
   nsg: true
   nat_gateway: true
   bastion: true
-  private_dns: true
-  compute: true
-  internal_load_balancer: true
+  private_dns: false
+  compute: false
+  internal_load_balancer: false
   firewall: false
   private_endpoint: false
 
@@ -45,9 +45,6 @@ networking:
       shared:
         name: snet-shared-services
         cidr: 10.10.1.0/24
-      firewall:
-        name: AzureFirewallSubnet
-        cidr: 10.10.2.0/26
 
   spokes:
     app:
@@ -84,8 +81,8 @@ routing:
   enabled: true
   mode: basic_hub_spoke
   spoke_to_spoke:
-    enabled: true
-    via: hub
+    enabled: false
+    via: none
   default_route:
     enabled: false
   firewall_next_hop:
@@ -111,40 +108,3 @@ bastion:
   name: bastion-fk-dev
   subnet_ref: hub.bastion
   sku: Standard
-
-private_dns:
-  enabled: true
-  zones:
-    - privatelink.blob.core.windows.net
-    - privatelink.file.core.windows.net
-    - privatelink.database.windows.net
-
-compute:
-  enabled: true
-  instances:
-    app01:
-      name: vm-fk-app-01
-      subnet_ref: app.backend
-      size: Standard_B2s
-      public_ip: false
-      admin_username: azureuser
-      image:
-        publisher: Canonical
-        offer: ubuntu-24_04-lts
-        sku: server
-        version: latest
-      cloud_init: scripts/install-nginx.sh
-
-load_balancer:
-  enabled: true
-  name: ilb-fk-app-dev
-  type: internal
-  frontend_subnet_ref: app.frontend
-  backend_vm_refs:
-    - app01
-  listener:
-    protocol: Tcp
-    port: 80
-  health_probe:
-    protocol: Tcp
-    port: 80

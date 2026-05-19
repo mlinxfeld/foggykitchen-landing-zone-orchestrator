@@ -29,6 +29,7 @@ The payload expresses:
 - security intent
 - feature switches
 - workload placement
+- explicit DNS link intent where applicable
 - interconnect staging intent where needed
 
 Terraform / OpenTofu then maps that intent to **statically declared** FoggyKitchen module calls and, in a few cases, explicit provider resources where the module catalog is not yet complete.

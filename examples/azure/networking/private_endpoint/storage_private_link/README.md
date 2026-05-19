@@ -41,6 +41,11 @@ This example contributes:
 
 The pattern reuses the common hub-spoke orchestrator and layers storage plus private endpoints on top.
 
+The payload now declares DNS linking explicitly through:
+
+- `private_dns.zones[].name`
+- `private_dns.zones[].link_to_vnets`
+
 ---
 
 ## 🚀 Deployment

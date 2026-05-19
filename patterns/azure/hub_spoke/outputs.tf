@@ -29,7 +29,7 @@ output "bastion_name" {
 }
 
 output "private_dns_zone_ids" {
-  value = try(module.private_dns[0].private_dns_zone_ids, {})
+  value = length(module.private_dns) > 0 ? merge([for _, mod in module.private_dns : mod.private_dns_zone_ids]...) : {}
 }
 
 output "vm_private_ips" {

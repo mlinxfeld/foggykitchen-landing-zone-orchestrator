@@ -9,12 +9,11 @@ This example provides one payload for the shared **Azure hub-and-spoke orchestra
 The goal of this example is to show a **clean, reusable Azure landing zone composition** built from FoggyKitchen modules:
 
 - hub-and-spoke networking
-- centralized routing structure
+- route table scaffolding for hub-and-spoke subnets
 - subnet-level security boundaries
-- private-first compute
 - NAT-based outbound access
 - Bastion-based operator access
-- internal load balancing
+- foundational landing zone scaffolding
 
 ---
 
@@ -30,10 +29,8 @@ This example composes:
 - route tables attached to spoke subnets
 - subnet-level NSGs
 - NAT Gateway on selected private subnets
-- Azure Bastion
-- Private DNS zones linked to all VNets
-- one private Linux VM
-- one internal load balancer
+- Azure Bastion in the hub
+- reserved application and data subnets for future workload patterns
 
 ---
 
@@ -51,6 +48,9 @@ This example contributes:
 
 The wrapper passes the payload into the shared HCL pattern, so the pattern code stays common and the payload carries the architecture intent.
 
+This basic example is intentionally **foundation-only**.
+It prepares the network, security, peering, egress, and operator-access layers without deploying application workloads, private endpoints, or cross-spoke transit.
+
 ---
 
 ## 🧩 Module Map
@@ -62,9 +62,6 @@ The wrapper passes the payload into the shared HCL pattern, so the pattern code 
 - `terraform-az-fk-public-ip` for NAT public identity
 - `terraform-az-fk-natgw` for outbound egress
 - `terraform-az-fk-bastion` for secure operator access
-- `terraform-az-fk-private-dns` for private DNS zones and VNet links
-- `terraform-az-fk-compute` for the application VM
-- `terraform-az-fk-loadbalancer` for the internal application load balancer
 
 ---
 
@@ -86,12 +83,6 @@ terraform plan
 terraform apply
 ```
 
-If you want to inject your own public key instead of generating one automatically, pass:
-
-```bash
-tofu apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
-```
-
 ---
 
 ## 📤 Expected Outputs
@@ -101,9 +92,6 @@ tofu apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
 - subnet IDs
 - NAT Gateway public IP
 - Bastion name
-- app VM private IP
-- internal load balancer private IP
-- generated admin SSH private key PEM when `admin_ssh_public_key` is left empty
 
 ---
 
@@ -125,9 +113,10 @@ terraform destroy
 
 ## ⚠️ Known Limitations
 
-- Route tables are explicit, but transit next-hop routes are only injected when a future firewall or NVA next hop is enabled.
-- Azure Firewall is intentionally out of MVP scope.
-- Private Endpoint integration is a planned next step.
+- Route tables are explicit, but this example does not provide hub-based spoke-to-spoke transit.
+- No application, database, or shared-services VMs are deployed in this basic scaffold.
+- Private DNS and private endpoints are addressed separately by the `private_endpoint` pattern.
+- Azure Firewall transit is addressed separately by the `firewall_transit` pattern.
 
 ---
 
