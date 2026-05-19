@@ -261,7 +261,7 @@ module "router_vm_nsg" {
   count  = local.features.nsg && local.security.nsg.enabled && length(local.route_next_hop_vm_refs) > 0 ? 1 : 0
   source = "git::https://github.com/mlinxfeld/terraform-az-fk-nsg.git?ref=main"
 
-  name                = "nsg-fk-router-01"
+  name                = try(local.compute.instances[one(tolist(local.route_next_hop_vm_refs))].nic_nsg_name, "nsg-fk-router-01")
   location            = local.location
   resource_group_name = azurerm_resource_group.this.name
   rules = [

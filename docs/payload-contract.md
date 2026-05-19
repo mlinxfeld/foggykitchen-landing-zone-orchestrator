@@ -90,6 +90,10 @@ For NAT naming, the Azure hub-and-spoke pattern also accepts optional maps:
 - `nat_gateway.names.<vnet_key>`
 - `nat_gateway.public_ip_names.<vnet_key>`
 
+When router-VM transit is used, the compute payload may also provide:
+
+- `compute.instances.<name>.nic_nsg_name`
+
 When `routing` is used for explicit transit, the Azure hub-and-spoke pattern also accepts:
 
 - `routing.route_tables.<name>.subnet_refs`

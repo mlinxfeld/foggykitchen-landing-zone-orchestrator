@@ -133,6 +133,7 @@ compute:
       admin_username: azureuser
       enable_ip_forwarding: true
       attach_nsg_to_nic: true
+      nic_nsg_name: nsg-fk-router-01
       private_ip_address_allocation: Static
       private_ip_address: 10.10.1.4
       image:
