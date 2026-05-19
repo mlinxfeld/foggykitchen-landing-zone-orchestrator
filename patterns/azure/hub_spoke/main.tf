@@ -76,7 +76,7 @@ module "hub_shared_nsg" {
   count  = local.features.nsg && local.security.nsg.enabled ? 1 : 0
   source = "git::https://github.com/mlinxfeld/terraform-az-fk-nsg.git?ref=main"
 
-  name                = "nsg-hub-shared"
+  name                = "nsg-fk-hub-shared"
   location            = local.location
   resource_group_name = azurerm_resource_group.this.name
   rules = [
@@ -105,7 +105,7 @@ module "app_frontend_nsg" {
   count  = local.features.nsg && local.security.nsg.enabled ? 1 : 0
   source = "git::https://github.com/mlinxfeld/terraform-az-fk-nsg.git?ref=main"
 
-  name                = "nsg-app-frontend"
+  name                = "nsg-fk-app-frontend"
   location            = local.location
   resource_group_name = azurerm_resource_group.this.name
   rules = [
@@ -134,7 +134,7 @@ module "app_backend_nsg" {
   count  = local.features.nsg && local.security.nsg.enabled ? 1 : 0
   source = "git::https://github.com/mlinxfeld/terraform-az-fk-nsg.git?ref=main"
 
-  name                = "nsg-app-backend"
+  name                = "nsg-fk-app-backend"
   location            = local.location
   resource_group_name = azurerm_resource_group.this.name
   rules = concat(
@@ -191,7 +191,7 @@ module "data_database_nsg" {
   count  = local.features.nsg && local.security.nsg.enabled ? 1 : 0
   source = "git::https://github.com/mlinxfeld/terraform-az-fk-nsg.git?ref=main"
 
-  name                = "nsg-data-database"
+  name                = "nsg-fk-data-database"
   location            = local.location
   resource_group_name = azurerm_resource_group.this.name
   rules = [
@@ -232,7 +232,7 @@ module "data_private_endpoints_nsg" {
   count  = local.features.nsg && local.security.nsg.enabled ? 1 : 0
   source = "git::https://github.com/mlinxfeld/terraform-az-fk-nsg.git?ref=main"
 
-  name                = "nsg-data-private-endpoints"
+  name                = "nsg-fk-data-private-endpoints"
   location            = local.location
   resource_group_name = azurerm_resource_group.this.name
   rules = [
