@@ -45,6 +45,28 @@ The router VM has:
 
 ---
 
+## 🖼️ Azure Portal View
+
+The screenshots below show the deployed `routing` pattern in Azure Portal after a successful `apply`.
+Together they provide a practical visual proof that the router VM transit path, UDRs, and supporting network components were created as expected.
+
+![Azure Portal overview of the deployed hub-spoke routing environment](diagrams/azure-hub-spoke-routing-portal01.png)
+
+![Azure Portal route table view for app backend transit routing](diagrams/azure-hub-spoke-routing-portal02.png)
+
+![Azure Portal route table view for data database transit routing](diagrams/azure-hub-spoke-routing-portal03.png)
+
+![Azure Portal router NIC view with forwarding and NSG context](diagrams/azure-hub-spoke-routing-portal04.png)
+
+These screenshots confirm:
+
+- the full resource group scope for the routing example
+- both route tables using `VirtualAppliance` next hop through `10.10.1.4`
+- the router VM NIC with IP forwarding enabled
+- the dedicated NIC-level NSG `nsg-fk-router-01`
+
+---
+
 ## 📂 Pattern And Payload
 
 The shared pattern lives in:
@@ -115,17 +137,27 @@ tofu apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
 
 ## 🧪 Validation
 
-After deployment, validate spoke-to-spoke transit from either VM:
+The ultimate proof for this pattern is a real spoke-to-spoke test performed through Azure Bastion.
+
+Suggested flow:
+
+- open a Bastion session to `vm-fk-app-routing-01`
+- from that VM, test reachability to `vm-fk-db-routing-01`
+- optionally repeat the same test in reverse from `db01` back to `app01`
+
+From `vm-fk-app-routing-01`:
 
 ```bash
 ping -c 4 10.30.1.4
 traceroute 10.30.1.4
+nc -zv 10.30.1.4 22
 ```
 
 Expected behavior:
 
 - `app01` reaches `db01` through the router VM in `hub.shared`
-- the reverse direction works the same way
+- `traceroute` shows the transit hop through `10.10.1.4`
+- the reverse direction works the same way from `db01` to `app01`
 
 ---
 
