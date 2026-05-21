@@ -2,8 +2,6 @@
 
 This example provides one payload for the shared **OCI DRG cross-region remote peering orchestrator pattern**.
 
-![OCI DRG cross-region architecture](diagrams/drg_cross_region_basic_architecture.png)
-
 ---
 
 ## 🎯 Purpose
@@ -94,6 +92,8 @@ Replace the example OCIDs in `landing-zone.yaml` and the placeholder values in `
 ## 🖼️ Diagrams
 
 This example includes a high-level architecture diagram for the home-region and peer-region DRG remote peering layout.
+
+![OCI DRG cross-region architecture](diagrams/drg_cross_region_basic_architecture.png)
 
 ---
 
