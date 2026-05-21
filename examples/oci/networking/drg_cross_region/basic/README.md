@@ -77,6 +77,8 @@ Before applying, make sure:
 - `cloud.compartment_ocid`
 - the home and peer VCN, DRG, RPC, and route table topology
 
+Replace the example OCIDs in `landing-zone.yaml` and the placeholder values in `terraform.tfvars.example` before running `tofu plan` or `tofu apply`.
+
 ---
 
 ## 📤 Expected Outputs
@@ -92,6 +94,34 @@ Before applying, make sure:
 ## 🖼️ Diagrams
 
 This example includes a high-level architecture diagram for the home-region and peer-region DRG remote peering layout.
+
+---
+
+## 🖥️ OCI Console View
+
+The screenshots below provide a lightweight control-plane confirmation of the cross-region DRG remote peering architecture.
+
+They show the home-region and peer-region resource inventory, the peering state of the remote peering connections, and representative routing views that confirm cross-region traffic is sent through the local DRG and across the RPC path.
+
+**Home region overview**
+
+![OCI DRG cross-region home region overview](diagrams/drg_cross_region_basic_oci_console01.png)
+
+**Peer region overview**
+
+![OCI DRG cross-region peer region overview](diagrams/drg_cross_region_basic_oci_console02.png)
+
+**Remote peering state**
+
+![OCI DRG cross-region RPC peering state](diagrams/drg_cross_region_basic_oci_console03.png)
+
+**Home-side routing view**
+
+![OCI DRG cross-region home routing view](diagrams/drg_cross_region_basic_oci_console04.png)
+
+**Peer-side routing view**
+
+![OCI DRG cross-region peer routing view](diagrams/drg_cross_region_basic_oci_console05.png)
 
 ---
 

@@ -4,11 +4,14 @@ This directory is reserved for **architecture images and validation screenshots*
 
 ---
 
-## 📂 Planned Assets
+## 📂 Assets
 
 - [`drg_cross_region_basic_architecture.png`](drg_cross_region_basic_architecture.png)
-- OCI Console screenshots for home and peer regions
-- DRG route table and RPC peering validation views
+- [`drg_cross_region_basic_oci_console01.png`](drg_cross_region_basic_oci_console01.png)
+- [`drg_cross_region_basic_oci_console02.png`](drg_cross_region_basic_oci_console02.png)
+- [`drg_cross_region_basic_oci_console03.png`](drg_cross_region_basic_oci_console03.png)
+- [`drg_cross_region_basic_oci_console04.png`](drg_cross_region_basic_oci_console04.png)
+- [`drg_cross_region_basic_oci_console05.png`](drg_cross_region_basic_oci_console05.png)
 
 ---
 
