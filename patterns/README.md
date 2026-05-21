@@ -37,7 +37,6 @@ Examples under `examples/` should stay thin and delegate architecture logic to t
 ### Multicloud
 
 - [README](multicloud/README.md)
-- [oci_azure_interconnect](multicloud/oci_azure_interconnect)
 
 ---
 
@@ -56,7 +55,7 @@ Recommended order:
 
 - `azure/hub_spoke` is the shared base for the Azure networking-oriented patterns
 - `azure/private_endpoint` extends the shared Azure networking foundation
-- `multicloud/oci_azure_interconnect` currently mixes FoggyKitchen modules with raw provider resources for the interconnect edge layer
+- advanced multicloud implementations are intentionally distributed outside this public repository
 
 ---
 

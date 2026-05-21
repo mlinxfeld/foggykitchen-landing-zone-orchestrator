@@ -112,30 +112,6 @@ Uses:
 
 ---
 
-## 🌉 Multicloud Pattern Usage
-
-### `patterns/multicloud/oci_azure_interconnect`
-
-Uses FoggyKitchen modules for foundations:
-
-- `terraform-az-fk-vnet`
-- `terraform-az-fk-nsg`
-- `terraform-az-fk-compute`
-- `terraform-oci-fk-vcn`
-- `terraform-oci-fk-compute`
-
-Uses raw provider resources for interconnect edge components:
-
-- Azure ExpressRoute Circuit
-- Azure Virtual Network Gateway
-- Azure Virtual Network Gateway Connection
-- OCI DRG edge resources
-- OCI FastConnect Virtual Circuit
-
-This is currently intentional and transitional.
-
----
-
 ## ⚠️ Current Gaps
 
 The current module map does not yet include dedicated FoggyKitchen modules for:
@@ -143,8 +119,9 @@ The current module map does not yet include dedicated FoggyKitchen modules for:
 - Azure ExpressRoute edge resources
 - OCI FastConnect edge resources
 - OCI interconnect-specific DRG edge abstractions
+- advanced multicloud blueprint composition in the private `foggykitchen-landing-zone-blueprint` repository
 
-Those are natural future expansion points for the module catalog.
+Those are natural future expansion points for the module catalog and premium blueprint layer.
 
 ---
 

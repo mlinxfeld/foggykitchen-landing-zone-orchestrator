@@ -112,49 +112,9 @@ Routing is treated as a first-class concern in the patterns.
 Why:
 
 - without routing, many examples would only be network skeletons
-- DRG, LPG, firewall transit, and interconnect patterns are primarily about route intent
+- DRG, LPG, and firewall transit patterns are primarily about route intent
 
 This is why routing is visible in payload structure and not hidden behind too much abstraction.
-
----
-
-## 🌉 OCI-Azure Interconnect Uses Raw Edge Resources
-
-The `oci_azure_interconnect` pattern currently mixes:
-
-- FoggyKitchen modules for Azure and OCI foundations
-- raw provider resources for:
-  - ExpressRoute Circuit
-  - Azure Virtual Network Gateway
-  - FastConnect Virtual Circuit
-  - related DRG edge resources
-
-Why:
-
-- there are no dedicated FoggyKitchen modules yet for ExpressRoute and FastConnect edge components
-- forcing these edge resources into unrelated modules would blur responsibilities
-
-This is a known transitional state and is expected to improve later.
-
----
-
-## ⏳ Staged Azure Connection for Interconnect
-
-`azurerm_virtual_network_gateway_connection` is controlled by:
-
-- `interconnect.azure.connection.enabled`
-
-Why:
-
-- the Azure connection is only reliably deployable after the OCI FastConnect side is fully ready
-- Terraform ordering alone does not guarantee partner-side operational readiness
-
-The intended flow is:
-
-1. apply with `enabled: false`
-2. wait for interconnect readiness
-3. set `enabled: true`
-4. apply again
 
 ---
 
@@ -178,6 +138,22 @@ The runtime consumer VM continues to access Azure Files through:
 - routed hub-and-spoke transit via the router VM
 
 This is why the public IP is passed as a wrapper variable and not embedded into `landing-zone.yaml` as architecture intent.
+
+---
+
+## 🔒 Public Repo Boundary
+
+The public orchestrator is intentionally optimized for:
+
+- Azure single-cloud reference patterns
+- OCI single-cloud reference patterns
+- educational and reviewable composition
+
+Advanced multicloud implementations are treated as premium blueprint material and can be maintained separately in the private:
+
+- `foggykitchen-landing-zone-blueprint`
+
+repository.
 
 ---
 

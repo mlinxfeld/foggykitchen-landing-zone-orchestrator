@@ -2,7 +2,7 @@
 
 FoggyKitchen Landing Zone Orchestrator is a reference architecture layer built on top of public **Terraform / OpenTofu modules** from the FoggyKitchen ecosystem for **Azure** and **OCI**.
 
-It demonstrates how reusable infrastructure modules can be composed into opinionated landing zone patterns: hub-and-spoke networking, private-first compute, private endpoints, DRG-based transit, local peering, private DNS, and future multicloud expansion.
+It demonstrates how reusable infrastructure modules can be composed into opinionated landing zone patterns: hub-and-spoke networking, private-first compute, private endpoints, DRG-based transit, local peering, private DNS, and firewall-based transit.
 
 This repository is a reference implementation and educational architecture pattern.  
 It is **not** a drop-in enterprise landing zone product.  
@@ -34,7 +34,6 @@ Depending on the selected pattern and payload, the repository can compose:
 - Azure firewall transit landing zones
 - OCI DRG hub-and-spoke landing zones
 - OCI same-region LPG local peering landing zones
-- OCI-Azure Interconnect reference landing zones
 - Private-first compute placement
 - Private DNS integration
 - Internal load balancing
@@ -92,9 +91,7 @@ foggykitchen-landing-zone-orchestrator/
 │   └── multicloud/
 │       ├── README.md
 │       └── interconnect/
-│           ├── README.md
-│           └── oci_azure_interconnect/
-│               └── basic/
+│           └── README.md
 ├── patterns/
 │   ├── azure/
 │   │   ├── firewall_transit/
@@ -104,7 +101,7 @@ foggykitchen-landing-zone-orchestrator/
 │       ├── drg_hub_spoke/
 │       └── lpg_local_peering/
 │   └── multicloud/
-│       └── oci_azure_interconnect/
+│       └── README.md
 ├── scripts/
 ├── LICENSE
 └── README.md
@@ -122,7 +119,6 @@ Currently implemented:
 - [examples/azure/networking/private_endpoint/storage_private_link](examples/azure/networking/private_endpoint/storage_private_link/README.md)
 - [examples/oci/networking/drg_hub_spoke/basic](examples/oci/networking/drg_hub_spoke/basic/README.md)
 - [examples/oci/networking/lpg_local_peering/basic](examples/oci/networking/lpg_local_peering/basic/README.md)
-- [examples/multicloud/interconnect/oci_azure_interconnect/basic](examples/multicloud/interconnect/oci_azure_interconnect/basic/README.md)
 
 Shared orchestration patterns:
 
@@ -132,13 +128,20 @@ Shared orchestration patterns:
 - [patterns/azure/private_endpoint](patterns/azure/private_endpoint)
 - [patterns/oci/drg_hub_spoke](patterns/oci/drg_hub_spoke)
 - [patterns/oci/lpg_local_peering](patterns/oci/lpg_local_peering)
-- [patterns/multicloud/oci_azure_interconnect](patterns/multicloud/oci_azure_interconnect)
 
-The `OCI-Azure Interconnect` pattern is intentionally transitional at this stage:
+---
 
-- Azure and OCI landing zone foundations use FoggyKitchen modules where they fit well
-- ExpressRoute, FastConnect, and related edge interconnect resources are still implemented as raw provider resources in the orchestrator
-- this will be improved over time as dedicated FoggyKitchen modules for interconnect edge components are introduced
+## 🔒 Advanced Blueprints
+
+The public orchestrator repository is intentionally focused on **single-cloud reference patterns**.
+
+Advanced multicloud implementations, including OCI-Azure interconnect scenarios, are being moved to the private:
+
+- `foggykitchen-landing-zone-blueprint`
+
+repository.
+
+That code is **not part of the free public distribution** of this repository. The goal is to keep the open repo clean and educational while reserving the most advanced cross-cloud scenarios for future monetization.
 
 ---
 
@@ -164,8 +167,6 @@ The repository composes FoggyKitchen building blocks such as:
 - `terraform-oci-fk-compute`
 - `terraform-oci-fk-loadbalancer`
 
-The current `OCI-Azure Interconnect` example also mixes FoggyKitchen modules with raw provider resources for the interconnect edge layer. This is deliberate for now and will be refactored as the module catalog expands.
-
 ---
 
 ## 📘 Getting Started
@@ -183,7 +184,7 @@ Then choose one of the example payloads under `examples/`.
 
 ## 🛣️ Roadmap
 
-- Add more payload variants under `examples/azure`, `examples/oci`, and `examples/multicloud`
+- Add more payload variants under `examples/azure` and `examples/oci`
 - Harden module source pinning to explicit tags
 - Extend Azure private endpoint coverage beyond Storage
 - Expand OCI examples with more service integrations

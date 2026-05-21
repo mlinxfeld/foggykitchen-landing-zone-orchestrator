@@ -217,26 +217,15 @@ Common OCI payload sections may include:
 
 ---
 
-## 🌉 Multicloud Payload Shape
+## 🔒 Public Contract Boundary
 
-The multicloud interconnect payload is intentionally split by cloud:
+This public repository documents the payload contract for the currently exposed Azure and OCI reference patterns.
 
-- `landing_zone`
-- `azure`
-- `oci`
-- `interconnect`
+More advanced multicloud payload contracts may be maintained separately in the private:
 
-Why:
+- `foggykitchen-landing-zone-blueprint`
 
-- keeps cloud-local concerns separate
-- makes cross-cloud edge resources explicit
-- avoids pretending that Azure and OCI share the same schema at every level
-
-The interconnect pattern also introduces a staged control flag:
-
-- `interconnect.azure.connection.enabled`
-
-This exists because the final Azure gateway connection should only be created after OCI FastConnect and Azure ExpressRoute are fully ready.
+repository when they are treated as premium blueprint content.
 
 ---
 

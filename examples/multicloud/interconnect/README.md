@@ -1,24 +1,29 @@
 # Multicloud Interconnect Examples
 
-This directory contains **multicloud interconnect examples** focused on private connectivity between cloud environments.
+This directory is intentionally kept as a **public placeholder**.
 
 ---
 
 ## 🎯 Purpose
 
-The goal of this section is to isolate cross-cloud network edge patterns from single-cloud landing zone patterns.
+The public orchestrator documents that advanced interconnect patterns exist, but the implementation itself is distributed separately in the private:
 
-Current emphasis:
+- `foggykitchen-landing-zone-blueprint`
 
-- OCI-Azure private interconnect
-- explicit ExpressRoute and FastConnect edge flow
-- staged deployment where partner readiness matters
+repository.
 
 ---
 
-## 📂 Available Examples
+## 🔒 Availability
 
-- [OCI-Azure Interconnect basic](oci_azure_interconnect/basic/README.md)
+The OCI-Azure interconnect implementation is **not part of the free public repository**.
+
+It is treated as a premium blueprint because it includes:
+
+- multicloud edge composition
+- staged deployment flow
+- cross-cloud validation requirements
+- more monetizable architecture content than the single-cloud examples
 
 ---
 

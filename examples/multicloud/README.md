@@ -1,24 +1,34 @@
 # Multicloud Examples
 
-This directory contains **multicloud payload examples** that combine patterns and resources across more than one cloud.
+This directory is intentionally kept as a **public pointer**, not as a free source distribution of the advanced multicloud implementations.
 
 ---
 
 ## 🎯 Purpose
 
-The goal of this section is to capture cross-cloud reference architectures without collapsing everything into a single supermodule.
+The public orchestrator repository focuses on:
 
-Current emphasis:
+- Azure reference patterns
+- OCI reference patterns
+- payload-first orchestration for single-cloud landing zones
 
-- interconnect-driven architecture
-- explicit edge components
-- payload-first orchestration
+Advanced multicloud scenarios are reserved for the private:
+
+- `foggykitchen-landing-zone-blueprint`
+
+repository, where they can evolve as premium blueprints with richer validation, tighter operational guidance, and more opinionated end-to-end scenarios.
 
 ---
 
-## 📂 Available Multicloud Domains
+## 🔒 Availability
 
-- [Interconnect examples](interconnect/README.md)
+The multicloud implementations are **not included here as free code**.
+
+This applies in particular to:
+
+- OCI-Azure interconnect blueprints
+- more advanced cross-cloud edge compositions
+- monetizable reference scenarios that go beyond the public orchestrator baseline
 
 ---
 

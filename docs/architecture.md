@@ -30,7 +30,7 @@ The payload expresses:
 - feature switches
 - workload placement
 - explicit DNS link intent where applicable
-- interconnect staging intent where needed
+- interconnect staging intent where needed in blueprint-tier scenarios
 
 Terraform / OpenTofu then maps that intent to **statically declared** FoggyKitchen module calls and, in a few cases, explicit provider resources where the module catalog is not yet complete.
 
@@ -67,12 +67,6 @@ This separation keeps the implementation:
 
 - `drg_hub_spoke`
 - `lpg_local_peering`
-
-### Multicloud
-
-- `oci_azure_interconnect`
-
----
 
 ## 🧩 Pattern Responsibilities
 
@@ -142,22 +136,6 @@ Focus:
 - private workloads
 - private load balancer
 
-### OCI-Azure Interconnect
-
-Focus:
-
-- Azure ExpressRoute side
-- OCI FastConnect side
-- DRG-based OCI attachment
-- private workload connectivity across clouds
-
-This pattern is intentionally transitional at the moment and still mixes:
-
-- FoggyKitchen modules for foundational layers
-- raw provider resources for interconnect edge components
-
----
-
 ## ⚖️ Why Thin Composition
 
 This repository intentionally does not reimplement all networking, compute, DNS, firewall, or storage internals.
@@ -180,7 +158,6 @@ Included today:
 - Azure private endpoint pattern for Storage
 - Azure firewall transit pattern
 - OCI DRG and LPG-based networking patterns
-- OCI-Azure interconnect reference pattern
 
 Not yet treated as first-class pattern families:
 
@@ -188,6 +165,7 @@ Not yet treated as first-class pattern families:
 - OCI object storage patterns
 - OCI bastion service integration
 - OCI block volume patterns
+- advanced multicloud premium blueprints in the private `foggykitchen-landing-zone-blueprint` repository
 - enterprise governance overlays
 - CI/CD and policy-as-code
 

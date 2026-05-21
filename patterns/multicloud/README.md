@@ -1,26 +1,34 @@
 # Multicloud Patterns
 
-This directory contains the shared **multicloud orchestration patterns** used by FoggyKitchen Landing Zone Orchestrator.
+This directory is intentionally kept as a **public pointer** rather than a source-bearing pattern family.
 
 ---
 
 ## 🎯 Purpose
 
-These patterns describe architectures that intentionally span more than one cloud and require explicit handling of cloud-local foundations and cross-cloud edge components.
+The public orchestrator repository keeps its open implementation scope focused on:
+
+- Azure patterns
+- OCI patterns
+- payload-driven single-cloud composition
+
+Advanced multicloud patterns are maintained in the private:
+
+- `foggykitchen-landing-zone-blueprint`
+
+repository.
 
 ---
 
-## 📂 Available Patterns
+## 🔒 Availability
 
-- [oci_azure_interconnect](oci_azure_interconnect/README.md)
+Multicloud patterns are **not distributed here as free shared HCL**.
 
----
+This applies to:
 
-## ⚠️ Current Notes
-
-- `oci_azure_interconnect` is currently a transitional pattern
-- foundational Azure and OCI layers use FoggyKitchen modules
-- interconnect edge components still use selected raw provider resources
+- OCI-Azure interconnect orchestration
+- premium cross-cloud edge scenarios
+- future higher-value multicloud blueprints
 
 ---
 

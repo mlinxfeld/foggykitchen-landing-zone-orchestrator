@@ -26,7 +26,7 @@ Examples are grouped by:
 
 - [Azure examples](azure/README.md)
 - [OCI examples](oci/README.md)
-- [Multicloud examples](multicloud/README.md)
+- [Multicloud examples availability note](multicloud/README.md)
 
 ---
 
