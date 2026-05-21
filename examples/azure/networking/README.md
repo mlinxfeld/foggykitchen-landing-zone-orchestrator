@@ -18,7 +18,7 @@ The goal of this section is to make Azure network patterns easy to discover and 
 ## 📂 Available Examples
 
 - [Hub-and-spoke examples](hub_spoke/README.md)
-- [Firewall transit basic](firewall_transit/basic/README.md)
+- [Firewall transit examples](firewall_transit/README.md)
 - [Private endpoint examples](private_endpoint/README.md)
 
 ---
