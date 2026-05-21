@@ -16,7 +16,7 @@ The goal of this section is to make OCI connectivity patterns easy to discover a
 ## 📂 Available Examples
 
 - [DRG hub-and-spoke basic](drg_hub_spoke/basic/README.md)
-- [LPG local peering basic](lpg_local_peering/basic/README.md)
+- [LPG local peering](lpg_local_peering/README.md)
 
 ---
 
