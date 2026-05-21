@@ -2,7 +2,7 @@
 
 FoggyKitchen Landing Zone Orchestrator is a reference architecture layer built on top of public **Terraform / OpenTofu modules** from the FoggyKitchen ecosystem for **Azure** and **OCI**.
 
-It demonstrates how reusable infrastructure modules can be composed into opinionated landing zone patterns: hub-and-spoke networking, private-first compute, private endpoints, DRG-based transit, local peering, private DNS, and firewall-based transit.
+It demonstrates how reusable infrastructure modules can be composed into opinionated landing zone patterns: hub-and-spoke networking, private-first compute, private endpoints, DRG cross-region remote peering, local peering, private DNS, and firewall-based transit.
 
 This repository is a reference implementation and educational architecture pattern.  
 It is **not** a drop-in enterprise landing zone product.  
@@ -32,7 +32,7 @@ Depending on the selected pattern and payload, the repository can compose:
 - Azure hub-and-spoke landing zones
 - Azure private endpoint landing zones
 - Azure firewall transit landing zones
-- OCI DRG hub-and-spoke landing zones
+- OCI DRG cross-region landing zones
 - OCI same-region LPG local peering landing zones
 - Private-first compute placement
 - Private DNS integration
@@ -84,7 +84,7 @@ foggykitchen-landing-zone-orchestrator/
 │   │   ├── README.md
 │   │   └── networking/
 │   │       ├── README.md
-│   │       ├── drg_hub_spoke/
+│   │       ├── drg_cross_region/
 │   │       │   └── basic/
 │   │       └── lpg_local_peering/
 │   │           └── basic/
@@ -98,7 +98,7 @@ foggykitchen-landing-zone-orchestrator/
 │   │   ├── hub_spoke/
 │   │   └── private_endpoint/
 │   ├── oci/
-│       ├── drg_hub_spoke/
+│       ├── drg_cross_region/
 │       └── lpg_local_peering/
 │   └── multicloud/
 │       └── README.md
@@ -117,7 +117,7 @@ Currently implemented:
 - [examples/azure/networking/hub_spoke/routing](examples/azure/networking/hub_spoke/routing/README.md)
 - [examples/azure/networking/firewall_transit/basic](examples/azure/networking/firewall_transit/basic/README.md)
 - [examples/azure/networking/private_endpoint/storage_private_link](examples/azure/networking/private_endpoint/storage_private_link/README.md)
-- [examples/oci/networking/drg_hub_spoke/basic](examples/oci/networking/drg_hub_spoke/basic/README.md)
+- [examples/oci/networking/drg_cross_region/basic](examples/oci/networking/drg_cross_region/basic/README.md)
 - [examples/oci/networking/lpg_local_peering/basic](examples/oci/networking/lpg_local_peering/basic/README.md)
 
 Shared orchestration patterns:
@@ -126,7 +126,7 @@ Shared orchestration patterns:
 - [patterns/azure/hub_spoke](patterns/azure/hub_spoke)
 - [patterns/azure/firewall_transit](patterns/azure/firewall_transit)
 - [patterns/azure/private_endpoint](patterns/azure/private_endpoint)
-- [patterns/oci/drg_hub_spoke](patterns/oci/drg_hub_spoke)
+- [patterns/oci/drg_cross_region](patterns/oci/drg_cross_region)
 - [patterns/oci/lpg_local_peering](patterns/oci/lpg_local_peering)
 
 ---

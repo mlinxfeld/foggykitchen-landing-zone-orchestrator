@@ -12,8 +12,3 @@ variable "private_key_path" {
   description = "Path to the OCI API private key."
   type        = string
 }
-
-variable "admin_ssh_public_key" {
-  description = "SSH public key injected into OCI compute instances."
-  type        = string
-}

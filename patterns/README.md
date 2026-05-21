@@ -31,7 +31,7 @@ Examples under `examples/` should stay thin and delegate architecture logic to t
 ### OCI
 
 - [README](oci/README.md)
-- [drg_hub_spoke](oci/drg_hub_spoke)
+- [drg_cross_region](oci/drg_cross_region)
 - [lpg_local_peering](oci/lpg_local_peering)
 
 ### Multicloud

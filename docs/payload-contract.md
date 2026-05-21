@@ -201,12 +201,11 @@ Common OCI payload sections may include:
 
 ### Example Usage by Pattern
 
-`drg_hub_spoke` focuses on:
+`drg_cross_region` focuses on:
 
-- multi-VCN `networking`
+- split-region `networking`
 - `connectivity.drg`
-- private `compute`
-- private `load_balancer`
+- explicit home and peer route table intent
 
 `lpg_local_peering` focuses on:
 

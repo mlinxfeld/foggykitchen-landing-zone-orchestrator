@@ -8,14 +8,14 @@ This directory contains **OCI networking-oriented landing zone examples** built 
 
 The goal of this section is to make OCI connectivity patterns easy to discover and compare:
 
-- DRG hub-and-spoke
+- DRG cross-region remote peering
 - LPG local peering
 
 ---
 
 ## 📂 Available Examples
 
-- [DRG hub-and-spoke basic](drg_hub_spoke/basic/README.md)
+- [DRG cross-region](drg_cross_region/README.md)
 - [LPG local peering](lpg_local_peering/README.md)
 
 ---

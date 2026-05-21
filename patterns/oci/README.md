@@ -12,14 +12,14 @@ These patterns focus on OCI network and connectivity architectures expressed thr
 
 ## 📂 Available Patterns
 
-- [drg_hub_spoke](drg_hub_spoke/README.md)
+- [drg_cross_region](drg_cross_region/README.md)
 - [lpg_local_peering](lpg_local_peering/README.md)
 
 ---
 
 ## 🧭 Reading Order
 
-1. [drg_hub_spoke](drg_hub_spoke/README.md)
+1. [drg_cross_region](drg_cross_region/README.md)
 2. [lpg_local_peering](lpg_local_peering/README.md)
 
 ---

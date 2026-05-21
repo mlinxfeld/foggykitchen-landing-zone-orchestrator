@@ -18,5 +18,14 @@ provider "oci" {
   user_ocid        = var.user_ocid
   fingerprint      = var.fingerprint
   private_key_path = var.private_key_path
-  region           = local.payload.cloud.region
+  region           = local.payload.cloud.home_region
+}
+
+provider "oci" {
+  alias            = "peer"
+  tenancy_ocid     = local.payload.cloud.tenancy_ocid
+  user_ocid        = var.user_ocid
+  fingerprint      = var.fingerprint
+  private_key_path = var.private_key_path
+  region           = local.payload.cloud.peer_region
 }

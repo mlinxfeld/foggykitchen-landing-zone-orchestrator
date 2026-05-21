@@ -65,7 +65,7 @@ This separation keeps the implementation:
 
 ### OCI
 
-- `drg_hub_spoke`
+- `drg_cross_region`
 - `lpg_local_peering`
 
 ## 🧩 Pattern Responsibilities
@@ -117,15 +117,14 @@ Focus:
 - centralized north-south egress
 - route tables pointing to Azure Firewall private IP
 
-### OCI DRG Hub-and-Spoke
+### OCI DRG Cross-Region
 
 Focus:
 
-- multi-VCN connectivity
-- DRG attachments
-- DRG route flow
-- private workloads
-- private load balancer
+- cross-region VCN connectivity
+- one DRG per region
+- RPC-based remote peering
+- explicit VCN-side and DRG-side route flow
 
 ### OCI LPG Local Peering
 
@@ -157,7 +156,7 @@ Included today:
 - Azure landing zone networking patterns
 - Azure private endpoint pattern for Storage
 - Azure firewall transit pattern
-- OCI DRG and LPG-based networking patterns
+- OCI DRG cross-region and LPG-based networking patterns
 
 Not yet treated as first-class pattern families:
 

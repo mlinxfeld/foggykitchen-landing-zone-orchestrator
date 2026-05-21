@@ -1,0 +1,85 @@
+landing_zone:
+  name: fk-oci-drg-cross-region-dev
+  environment: dev
+  freeform_tags:
+    project: foggykitchen
+    environment: dev
+    managed_by: opentofu
+    landing_zone: fk-oci-drg-cross-region-dev
+
+cloud:
+  provider: oci
+  home_region: eu-frankfurt-1
+  peer_region: eu-amsterdam-1
+  tenancy_ocid: ocid1.tenancy.oc1..exampleuniqueid
+  compartment_ocid: ocid1.compartment.oc1..exampleuniqueid
+
+architecture:
+  topology: drg_cross_region
+  access_model: private_first
+  routing_model: drg_remote_peering
+  security_model: deny_by_default
+
+networking:
+  home:
+    vcn:
+      name: vcn-fk-drg-home-dev
+      dns_label: fkdrghome
+      cidr_blocks:
+        - 10.30.0.0/16
+      route_tables:
+        private:
+          name: rt-fk-drg-home-private
+      security_lists:
+        app:
+          name: sl-fk-drg-home-app
+      subnets:
+        app:
+          name: snet-fk-drg-home-app
+          dns_label: homeapp
+          cidr: 10.30.1.0/24
+          route_table_key: private
+          security_list_keys:
+            - app
+  peer:
+    vcn:
+      name: vcn-fk-drg-peer-dev
+      dns_label: fkdrgpeer
+      cidr_blocks:
+        - 10.40.0.0/16
+      route_tables:
+        private:
+          name: rt-fk-drg-peer-private
+      security_lists:
+        app:
+          name: sl-fk-drg-peer-app
+      subnets:
+        app:
+          name: snet-fk-drg-peer-app
+          dns_label: peerapp
+          cidr: 10.40.1.0/24
+          route_table_key: private
+          security_list_keys:
+            - app
+
+connectivity:
+  mode: drg_cross_region
+  drg:
+    home:
+      name: drg-fk-home-dev
+      route_tables:
+        from_vcn:
+          name: drg-rt-fk-home-from-vcn
+        from_rpc:
+          name: drg-rt-fk-home-from-rpc
+      rpc:
+        name: rpc-fk-home-dev
+    peer:
+      name: drg-fk-peer-dev
+      route_tables:
+        from_vcn:
+          name: drg-rt-fk-peer-from-vcn
+        from_rpc:
+          name: drg-rt-fk-peer-from-rpc
+      rpc:
+        name: rpc-fk-peer-dev

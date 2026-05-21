@@ -92,14 +92,18 @@ Uses:
 
 ## 🧩 OCI Pattern Usage
 
-### `patterns/oci/drg_hub_spoke`
+### `patterns/oci/drg_cross_region`
 
 Uses:
 
 - `terraform-oci-fk-vcn`
 - `terraform-oci-fk-drg`
-- `terraform-oci-fk-compute`
-- `terraform-oci-fk-loadbalancer`
+
+Why this pattern is narrower:
+
+- it focuses on OCI-native cross-region DRG and RPC composition
+- it intentionally leaves compute and load balancer concerns out of scope
+- it maps more directly to the `terraform-oci-fk-drg` remote peering reference scenario
 
 ### `patterns/oci/lpg_local_peering`
 
