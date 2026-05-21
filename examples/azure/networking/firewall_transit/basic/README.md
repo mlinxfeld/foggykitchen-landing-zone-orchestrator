@@ -87,6 +87,76 @@ tofu apply -var="admin_ssh_public_key=$(cat ~/.ssh/id_rsa.pub)"
 
 ---
 
+## ✅ Validation
+
+This example was validated after `tofu apply` with Azure Run Command executed on both spoke VMs.
+
+Observed results:
+
+- `vm-fk-spoke1-01` reached `vm-fk-spoke2-01` successfully with `ping` to `10.2.1.4`
+- `vm-fk-spoke2-01` reached `vm-fk-spoke1-01` successfully with `ping` to `10.1.1.4`
+- TCP connectivity on port `22` succeeded in both directions with `nc -zv`
+- both VMs reached the public Internet successfully with `curl https://www.microsoft.com`
+- both VMs reported the same egress IP: `20.126.148.255`
+- the observed egress IP matched the Azure Firewall public IP attached to `pip-fk-firewall-dev`
+
+This confirms two key behaviors of the pattern:
+
+- east-west spoke traffic is permitted through the centralized firewall
+- default Internet egress is centralized through Azure Firewall rather than direct spoke outbound paths
+
+Note: `traceroute` was not present in the default VM image during validation, so hop-by-hop path output was not captured in this run.
+
+---
+
+## 🖥️ Azure Portal View
+
+The screenshots below capture the minimum control-plane and runtime evidence for the deployed firewall transit pattern.
+
+They show the resource group inventory, Azure Firewall configuration and rules, route tables pointing both east-west and `0.0.0.0/0` to the firewall, and successful validation from both spoke VMs.
+
+**Resource group overview**
+
+![Azure firewall transit resource group overview](diagrams/firewall_transit_basic_portal01.png)
+
+**Azure Firewall overview**
+
+![Azure firewall transit firewall overview](diagrams/firewall_transit_basic_portal02.png)
+
+**East-west network rule collection**
+
+![Azure firewall transit network rule collection](diagrams/firewall_transit_basic_portal03.png)
+
+**East-west rule details**
+
+![Azure firewall transit network rule details](diagrams/firewall_transit_basic_portal04.png)
+
+**Route table for spoke1**
+
+![Azure firewall transit route table spoke1](diagrams/firewall_transit_basic_portal05.png)
+
+**Route table for spoke2**
+
+![Azure firewall transit route table spoke2](diagrams/firewall_transit_basic_portal06.png)
+
+**Validation from spoke1 VM**
+
+![Azure firewall transit run command from spoke1](diagrams/firewall_transit_basic_portal07.png)
+
+**Validation from spoke2 VM**
+
+![Azure firewall transit run command from spoke2](diagrams/firewall_transit_basic_portal08.png)
+
+**Application rule collection**
+
+![Azure firewall transit application rule collection](diagrams/firewall_transit_basic_portal09.png)
+
+**Application rule details**
+
+![Azure firewall transit application rule details](diagrams/firewall_transit_basic_portal10.png)
+
+---
+
 ## 🧹 Cleanup
 
 ```bash

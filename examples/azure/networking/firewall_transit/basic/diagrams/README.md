@@ -16,6 +16,16 @@ Expected assets may include:
 Current assets:
 
 - `firewall_transit_basic_architecture.png`
+- `firewall_transit_basic_portal01.png`
+- `firewall_transit_basic_portal02.png`
+- `firewall_transit_basic_portal03.png`
+- `firewall_transit_basic_portal04.png`
+- `firewall_transit_basic_portal05.png`
+- `firewall_transit_basic_portal06.png`
+- `firewall_transit_basic_portal07.png`
+- `firewall_transit_basic_portal08.png`
+- `firewall_transit_basic_portal09.png`
+- `firewall_transit_basic_portal10.png`
 
 ---
 
