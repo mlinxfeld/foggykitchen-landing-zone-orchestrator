@@ -5,7 +5,7 @@ resource "azurerm_resource_group" "this" {
 }
 
 module "hub_vnet" {
-  source = "git::https://github.com/mlinxfeld/terraform-az-fk-vnet.git?ref=main"
+  source = "git::https://github.com/foggykitchen/terraform-az-fk-vnet.git?ref=main"
 
   name                = local.hub.name
   location            = local.location
@@ -27,7 +27,7 @@ module "hub_vnet" {
 
 module "spoke_vnets" {
   for_each = local.spokes
-  source   = "git::https://github.com/mlinxfeld/terraform-az-fk-vnet.git?ref=main"
+  source   = "git::https://github.com/foggykitchen/terraform-az-fk-vnet.git?ref=main"
 
   name                = each.value.name
   location            = local.location
