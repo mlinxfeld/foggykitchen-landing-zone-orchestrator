@@ -126,7 +126,7 @@ module "routing" {
 
 module "compute" {
   for_each = local.compute_instances
-  source   = "git::https://github.com/mlinxfeld/terraform-az-fk-compute.git?ref=v0.3.5"
+  source   = "git::https://github.com/foggykitchen/terraform-az-fk-compute.git?ref=v0.3.5"
 
   name                          = each.value.name
   location                      = local.location

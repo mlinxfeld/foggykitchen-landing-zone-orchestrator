@@ -386,7 +386,7 @@ module "internal_load_balancer" {
 
 module "compute" {
   for_each = local.features.compute && try(local.compute.enabled, false) ? local.compute_instances : {}
-  source   = "git::https://github.com/mlinxfeld/terraform-az-fk-compute.git?ref=v0.3.5"
+  source   = "git::https://github.com/foggykitchen/terraform-az-fk-compute.git?ref=v0.3.5"
 
   name                          = each.value.name
   location                      = local.location

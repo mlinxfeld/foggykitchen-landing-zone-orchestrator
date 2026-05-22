@@ -50,7 +50,7 @@ module "private_endpoints" {
 
 module "compute_storage_mounts" {
   count  = local.features.compute && try(local.compute_storage_mounts.enabled, false) ? 1 : 0
-  source = "git::https://github.com/mlinxfeld/terraform-az-fk-compute.git?ref=v0.3.5"
+  source = "git::https://github.com/foggykitchen/terraform-az-fk-compute.git?ref=v0.3.5"
 
   name                = local.compute_storage_mounts.name
   location            = local.location
