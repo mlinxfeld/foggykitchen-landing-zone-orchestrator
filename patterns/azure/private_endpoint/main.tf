@@ -35,7 +35,7 @@ module "storage" {
 
 module "private_endpoints" {
   for_each = local.features.private_endpoint && local.private_endpoints.enabled ? local.resolved_private_endpoints : {}
-  source   = "git::https://github.com/mlinxfeld/terraform-az-fk-private-endpoint.git?ref=main"
+  source   = "git::https://github.com/foggykitchen/terraform-az-fk-private-endpoint.git?ref=main"
 
   name                           = each.value.name
   location                       = local.location

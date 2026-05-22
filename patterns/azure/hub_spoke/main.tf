@@ -338,7 +338,7 @@ module "bastion" {
 
 module "private_dns" {
   for_each = local.private_dns_zone_definitions
-  source   = "git::https://github.com/mlinxfeld/terraform-az-fk-private-dns.git?ref=main"
+  source   = "git::https://github.com/foggykitchen/terraform-az-fk-private-dns.git?ref=main"
 
   resource_group_name    = azurerm_resource_group.this.name
   private_dns_zone_names = toset([each.key])
