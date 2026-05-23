@@ -48,7 +48,7 @@ resource "oci_core_default_route_table" "vcn_defaults" {
 
 module "load_balancer" {
   count  = local.load_balancer.enabled ? 1 : 0
-  source = "git::https://github.com/mlinxfeld/terraform-oci-fk-loadbalancer.git?ref=main"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-loadbalancer.git?ref=main"
 
   name             = local.load_balancer.name
   compartment_ocid = local.compartment_ocid
