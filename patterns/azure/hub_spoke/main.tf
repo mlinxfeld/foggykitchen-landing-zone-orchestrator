@@ -324,7 +324,7 @@ module "nat_gateway" {
 
 module "bastion" {
   count  = local.features.bastion && local.bastion.enabled ? 1 : 0
-  source = "git::https://github.com/mlinxfeld/terraform-az-fk-bastion.git?ref=main"
+  source = "git::https://github.com/foggykitchen/terraform-az-fk-bastion.git?ref=main"
 
   name                = local.bastion.name
   location            = local.location
