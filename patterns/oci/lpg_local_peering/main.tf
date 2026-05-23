@@ -13,7 +13,7 @@ module "vcns" {
 }
 
 module "lpg" {
-  source = "git::https://github.com/mlinxfeld/terraform-oci-fk-lpg.git?ref=main"
+  source = "git::https://github.com/foggykitchen/terraform-oci-fk-lpg.git?ref=main"
 
   compartment_ocid_1 = local.compartment_ocid
   compartment_ocid_2 = local.compartment_ocid
