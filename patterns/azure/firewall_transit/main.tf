@@ -49,7 +49,7 @@ module "spoke_vnets" {
 
 module "hub_to_spokes_peering" {
   for_each = module.spoke_vnets
-  source   = "git::https://github.com/mlinxfeld/terraform-az-fk-vnet-peering.git?ref=main"
+  source   = "git::https://github.com/foggykitchen/terraform-az-fk-vnet-peering.git?ref=main"
 
   resource_group_name          = azurerm_resource_group.this.name
   vnet_1_id                    = module.hub_vnet.vnet_id
@@ -75,7 +75,7 @@ module "firewall_public_ip" {
 }
 
 module "firewall" {
-  source = "git::https://github.com/mlinxfeld/terraform-az-fk-firewall.git?ref=v0.2.0"
+  source = "git::https://github.com/foggykitchen/terraform-az-fk-firewall.git?ref=v0.2.0"
 
   name                = local.firewall.name
   location            = local.location
@@ -96,7 +96,7 @@ module "firewall" {
 }
 
 module "routing" {
-  source = "git::https://github.com/mlinxfeld/terraform-az-fk-routing.git?ref=main"
+  source = "git::https://github.com/foggykitchen/terraform-az-fk-routing.git?ref=main"
 
   resource_group_name = azurerm_resource_group.this.name
   route_tables = {

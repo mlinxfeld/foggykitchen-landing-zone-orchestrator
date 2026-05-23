@@ -49,7 +49,7 @@ module "spoke_vnets" {
 
 module "hub_to_spoke_peering" {
   for_each = local.features.vnet_peering && local.peering.hub_to_spokes ? module.spoke_vnets : {}
-  source   = "git::https://github.com/mlinxfeld/terraform-az-fk-vnet-peering.git?ref=main"
+  source   = "git::https://github.com/foggykitchen/terraform-az-fk-vnet-peering.git?ref=main"
 
   resource_group_name          = azurerm_resource_group.this.name
   vnet_1_id                    = module.hub_vnet.vnet_id
@@ -65,7 +65,7 @@ module "hub_to_spoke_peering" {
 
 module "routing" {
   count  = local.features.routing && try(local.routing.enabled, false) ? 1 : 0
-  source = "git::https://github.com/mlinxfeld/terraform-az-fk-routing.git?ref=main"
+  source = "git::https://github.com/foggykitchen/terraform-az-fk-routing.git?ref=main"
 
   resource_group_name = azurerm_resource_group.this.name
   route_tables        = local.route_tables
