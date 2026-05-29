@@ -1,5 +1,5 @@
 locals {
-  config       = yamldecode(file(var.payload_file))
+  config       = yamldecode(templatefile(var.payload_file, var.payload_template_vars))
   landing_zone = local.config.landing_zone
   cloud        = local.config.cloud
   architecture = local.config.architecture
