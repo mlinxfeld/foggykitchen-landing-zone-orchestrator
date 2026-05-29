@@ -49,7 +49,7 @@ devops:
       name: build
       description: Build Docker image from mirrored repository source
       build_spec_file: build_spec.yaml
-      image: OL7_X86_64_STANDARD_10
+      image: OL8_X86_64_STANDARD_10
       timeout_in_seconds: 36000
     deliver_stage:
       name: deliver
